@@ -4,12 +4,41 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is a Unity 6000.2.5f1 project called "Scratcher" configured for 2D development using the Universal Render Pipeline (URP).
+This is a Unity 6000.2.5f1 project called "Scratcher" - a 2D isometric fishing/farming game configured for development using the Universal Render Pipeline (URP). The project is now version controlled with Git and hosted on GitHub at: https://github.com/chrischaps/Scratcher
+
+## Game Features
+
+This project implements a 2D isometric game with the following systems:
+
+### Core Systems
+- **Terrain Generation**: Procedural terrain with grass and water tiles using Unity's Tilemap system
+- **Player Movement**: Multiple controller options including grid-based, isometric, and terrain-aware movement
+- **Fishing System**: Complete fishing mechanics with water zones, fish database, and catch mechanics
+- **Inventory System**: Item management and storage functionality
+- **Time Management**: Game time progression system
+- **Camera System**: Flexible camera controller for 2D isometric gameplay
+
+### Implemented Components
+- **Data Systems**: Game Manager, Fish Database, Level Configuration, Inventory System
+- **Player Controllers**: Grid-based, Isometric, and Terrain-aware movement options
+- **Terrain Management**: Terrain generation and layer management
+- **Tile System**: Custom tile implementations for different terrain types
+- **UI System**: Fishing game user interface components
 
 ## Unity Project Structure
 
-- **Assets/Scripts/**: C# scripts directory (currently empty - new project)
-- **Assets/Scenes/**: Unity scene files (contains SampleScene.unity)
+- **Assets/Scripts/**: Organized C# scripts with subdirectories:
+  - `Camera/`: Camera control systems
+  - `Data/`: Core data management (GameManager, Fish data, Inventory, etc.)
+  - `Fishing/`: Fishing gameplay mechanics
+  - `Player/`: Player movement controllers
+  - `Terrain/`: Terrain generation and management
+  - `Tiles/`: Custom tile implementations
+  - `UI/`: User interface components
+- **Assets/Scenes/**: Unity scene files (SampleScene.unity, Game.unity)
+- **Assets/Sprites/**: Character animations and terrain sprites
+- **Assets/TerrainTiles/**: Tile assets for terrain generation
+- **Assets/Configs/**: ScriptableObject configurations
 - **Assets/Settings/**: Render pipeline and project settings
 - **ProjectSettings/**: Unity project configuration files
 - **Packages/**: Unity package dependencies managed via Package Manager
@@ -51,13 +80,24 @@ Standard UI navigation with support for all input methods (keyboard, gamepad, to
 - Run tests via Window → General → Test Runner in Unity Editor
 - Write tests in `Assets/Tests/` directory (create if needed)
 
+## Version Control
+
+This project is tracked with Git and hosted on GitHub:
+- **Repository**: https://github.com/chrischaps/Scratcher
+- **Branch**: master
+- **Git Setup**: Includes Unity-specific .gitignore file
+- All Unity-generated and temporary files are properly excluded from version control
+
 ## Architecture Notes
 
-This is a fresh Unity project configured for 2D development with:
+This Unity project is configured for 2D isometric game development with:
 - Universal Render Pipeline for optimized 2D rendering
+- Component-based architecture with modular systems
+- ScriptableObject-based configuration system
 - Comprehensive input system supporting multiple platforms
 - 2D-focused package selection (animation, sprites, tilemaps)
 - Multi-platform input scheme (desktop, mobile, gamepad, XR ready)
+- Organized code structure following Unity best practices
 
 ## File Conventions
 

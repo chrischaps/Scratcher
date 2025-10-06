@@ -1,60 +1,75 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
+using Random = UnityEngine.Random;
 
 public class DebugUIManager : UIToolkitPanel
 {
-    [Header("Debug Settings")]
-    [SerializeField] private bool startVisible = false;
+    [Header("Debug Settings")] [SerializeField]
+    private bool startVisible;
+
     [SerializeField] private float updateInterval = 0.1f;
-
-    // Tab buttons
-    private Button tabSystem, tabGameState, tabFishing, tabTerrain, tabCheats;
+    private Button addRandomFishButton, addRareFishButton, fillInventoryButton;
     private Button closeButton;
-
-    // Tab content containers
-    private VisualElement systemTab, gameStateTab, fishingTab, terrainTab, cheatsTab;
     private VisualElement currentActiveTab;
+    private Label drawCallsValue, trianglesValue, verticesValue;
+    private Label fishCount, totalValue;
+    private FishDatabase fishDatabase;
+    private FishingController fishingController;
+    private ScrollView fishList;
 
     // System stats elements
     private Label fpsValue, frametimeValue, memoryValue, gameObjectsValue;
-    private Label drawCallsValue, trianglesValue, verticesValue;
+    private Button generateTerrainButton, clearTerrainButton;
+    private InventorySystem inventorySystem;
 
-    // Game state elements
-    private Slider timeSlider, timescaleSlider;
+    private float lastUpdateTime;
+    private Label mapSizeDisplay, noiseScaleDisplay, waterThresholdDisplay;
     private SliderInt mapSizeSlider;
-    private Label timeDisplay, timescaleDisplay, dayValue;
-    private Label playerPosition, playerMoving, playerFishing;
-    private Label fishCount, totalValue;
 
     // Fishing debug elements
     private Label nearWater, waterType, availableFishCount, totalFishTypes;
-    private ScrollView fishList;
-
-    // Terrain elements
-    private Slider noiseSizeSlider, waterThresholdSlider;
-    private Label mapSizeDisplay, noiseScaleDisplay, waterThresholdDisplay;
 
     // Control buttons
     private Button nextDayButton, clearInventoryButton;
-    private Button generateTerrainButton, clearTerrainButton;
-    private Button addRandomFishButton, addRareFishButton, fillInventoryButton;
+
+    // Terrain elements
+    private Slider noiseSizeSlider, waterThresholdSlider;
+    private IsometricPlayerController playerController;
+    private Label playerPosition, playerMoving, playerFishing;
+
+    // Tab content containers
+    private VisualElement systemTab, gameStateTab, fishingTab, terrainTab, cheatsTab;
+    private Dictionary<string, Button> tabButtons;
+    private Dictionary<string, VisualElement> tabs;
+
+    // Tab buttons
+    private Button tabSystem, tabGameState, tabFishing, tabTerrain, tabCheats;
     private Button teleportButton, godModeButton, noclipButton, resetGameButton;
 
     // Input fields
     private FloatField teleportX, teleportY;
+    private TerrainGenerator terrainGenerator;
+    private Label timeDisplay, timescaleDisplay, dayValue;
 
     // References to game systems
     private GameTimeManager timeManager;
-    private InventorySystem inventorySystem;
-    private FishingController fishingController;
-    private FishDatabase fishDatabase;
-    private TerrainGenerator terrainGenerator;
-    private IsometricPlayerController playerController;
 
-    private float lastUpdateTime;
-    private Dictionary<string, VisualElement> tabs;
-    private Dictionary<string, Button> tabButtons;
+    // Game state elements
+    private Slider timeSlider, timescaleSlider;
+
+    private void Update()
+    {
+        if (!IsVisible || !isInitialized) return;
+
+        // Update at specified interval
+        if (Time.unscaledTime - lastUpdateTime >= updateInterval)
+        {
+            UpdateDebugInfo();
+            lastUpdateTime = Time.unscaledTime;
+        }
+    }
 
     protected override void BindUIElements()
     {
@@ -228,18 +243,6 @@ public class DebugUIManager : UIToolkitPanel
         PopulateFishList();
     }
 
-    private void Update()
-    {
-        if (!IsVisible || !isInitialized) return;
-
-        // Update at specified interval
-        if (Time.unscaledTime - lastUpdateTime >= updateInterval)
-        {
-            UpdateDebugInfo();
-            lastUpdateTime = Time.unscaledTime;
-        }
-    }
-
     private void UpdateDebugInfo()
     {
         UpdateSystemStats();
@@ -257,7 +260,7 @@ public class DebugUIManager : UIToolkitPanel
             frametimeValue.text = $"{Time.unscaledDeltaTime * 1000f:F1}ms";
 
         if (memoryValue != null)
-            memoryValue.text = $"{System.GC.GetTotalMemory(false) / 1024 / 1024} MB";
+            memoryValue.text = $"{GC.GetTotalMemory(false) / 1024 / 1024} MB";
 
         if (gameObjectsValue != null)
             gameObjectsValue.text = FindObjectsOfType<GameObject>().Length.ToString();
@@ -278,7 +281,7 @@ public class DebugUIManager : UIToolkitPanel
         // Time info
         if (timeManager != null)
         {
-            float currentTime = timeManager.GetCurrentTime();
+            var currentTime = timeManager.GetCurrentTime();
             if (timeSlider != null && !timeSlider.focusController.focusedElement.Equals(timeSlider))
                 timeSlider.SetValueWithoutNotify(currentTime);
 
@@ -297,7 +300,8 @@ public class DebugUIManager : UIToolkitPanel
         if (playerController != null)
         {
             if (playerPosition != null)
-                playerPosition.text = $"({playerController.transform.position.x:F1}, {playerController.transform.position.y:F1}, {playerController.transform.position.z:F1})";
+                playerPosition.text =
+                    $"({playerController.transform.position.x:F1}, {playerController.transform.position.y:F1}, {playerController.transform.position.z:F1})";
 
             if (playerMoving != null)
                 playerMoving.text = playerController.IsMoving.ToString();
@@ -305,10 +309,8 @@ public class DebugUIManager : UIToolkitPanel
 
         // Fishing info
         if (fishingController != null && playerFishing != null)
-        {
             // This would need a public property in FishingController
             playerFishing.text = "Unknown"; // fishingController.IsFishing.ToString();
-        }
 
         // Inventory info
         if (inventorySystem != null)
@@ -334,10 +336,8 @@ public class DebugUIManager : UIToolkitPanel
         }
 
         if (fishDatabase != null && availableFishCount != null)
-        {
             // This would need implementation based on current conditions
             availableFishCount.text = "Unknown";
-        }
     }
 
     private void PopulateFishList()
@@ -370,29 +370,20 @@ public class DebugUIManager : UIToolkitPanel
     private void SwitchTab(string tabName)
     {
         // Hide all tabs
-        foreach (var tab in tabs.Values)
-        {
-            tab.RemoveFromClassList("tab-active");
-        }
+        foreach (var tab in tabs.Values) tab.RemoveFromClassList("tab-active");
 
         // Remove active class from all tab buttons
-        foreach (var button in tabButtons.Values)
-        {
-            button.RemoveFromClassList("tab-active");
-        }
+        foreach (var button in tabButtons.Values) button.RemoveFromClassList("tab-active");
 
         // Show selected tab
-        if (tabs.TryGetValue(tabName, out VisualElement selectedTab))
+        if (tabs.TryGetValue(tabName, out var selectedTab))
         {
             selectedTab.AddToClassList("tab-active");
             currentActiveTab = selectedTab;
         }
 
         // Activate selected tab button
-        if (tabButtons.TryGetValue(tabName, out Button selectedButton))
-        {
-            selectedButton.AddToClassList("tab-active");
-        }
+        if (tabButtons.TryGetValue(tabName, out var selectedButton)) selectedButton.AddToClassList("tab-active");
     }
 
     // Event handlers
@@ -440,19 +431,15 @@ public class DebugUIManager : UIToolkitPanel
     private void OnGenerateTerrain()
     {
         if (terrainGenerator != null)
-        {
             // This would need a public method in TerrainGenerator
             Debug.Log("Generate Terrain requested - would need public method in TerrainGenerator");
-        }
     }
 
     private void OnClearTerrain()
     {
         if (terrainGenerator != null)
-        {
             // This would need a public method in TerrainGenerator
             Debug.Log("Clear Terrain requested - would need public method in TerrainGenerator");
-        }
     }
 
     private void OnAddRandomFish()
@@ -462,7 +449,7 @@ public class DebugUIManager : UIToolkitPanel
             var randomFish = fishDatabase.GetRandomFish();
             if (randomFish != null)
             {
-                float weight = Random.Range(randomFish.minWeight, randomFish.maxWeight);
+                var weight = Random.Range(randomFish.minWeight, randomFish.maxWeight);
                 inventorySystem.AddFish(randomFish, weight);
             }
         }
@@ -476,7 +463,7 @@ public class DebugUIManager : UIToolkitPanel
             if (rareFish.Count > 0)
             {
                 var fish = rareFish[Random.Range(0, rareFish.Count)];
-                float weight = Random.Range(fish.minWeight, fish.maxWeight);
+                var weight = Random.Range(fish.minWeight, fish.maxWeight);
                 inventorySystem.AddFish(fish, weight);
             }
         }
@@ -490,7 +477,7 @@ public class DebugUIManager : UIToolkitPanel
             foreach (var fish in allFish)
             {
                 if (inventorySystem.IsInventoryFull()) break;
-                float weight = Random.Range(fish.minWeight, fish.maxWeight);
+                var weight = Random.Range(fish.minWeight, fish.maxWeight);
                 inventorySystem.AddFish(fish, weight);
             }
         }
@@ -500,7 +487,7 @@ public class DebugUIManager : UIToolkitPanel
     {
         if (playerController != null && teleportX != null && teleportY != null)
         {
-            Vector3 newPosition = new Vector3(teleportX.value, teleportY.value, playerController.transform.position.z);
+            var newPosition = new Vector3(teleportX.value, teleportY.value, playerController.transform.position.z);
             playerController.transform.position = newPosition;
         }
     }
@@ -523,18 +510,12 @@ public class DebugUIManager : UIToolkitPanel
     public override void ShowPanel()
     {
         base.ShowPanel();
-        if (root != null)
-        {
-            root.style.display = DisplayStyle.Flex;
-        }
+        if (root != null) root.style.display = DisplayStyle.Flex;
     }
 
     public override void HidePanel()
     {
         base.HidePanel();
-        if (root != null)
-        {
-            root.style.display = DisplayStyle.None;
-        }
+        if (root != null) root.style.display = DisplayStyle.None;
     }
 }

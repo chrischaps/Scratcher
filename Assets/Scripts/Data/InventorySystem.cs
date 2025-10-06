@@ -1,45 +1,44 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class CaughtFish
 {
     public FishData fishData;
     public float weight;
     public int value;
-    public System.DateTime dateCaught;
+    public DateTime dateCaught;
 
     public CaughtFish(FishData fish, float fishWeight)
     {
         fishData = fish;
         weight = fishWeight;
         value = Mathf.RoundToInt(fish.baseValue * (weight / ((fish.minWeight + fish.maxWeight) * 0.5f)));
-        dateCaught = System.DateTime.Now;
+        dateCaught = DateTime.Now;
     }
 }
 
 public class InventorySystem : MonoBehaviour
 {
-    [Header("Inventory Settings")]
-    [SerializeField] private int maxInventorySize = 50;
+    [Header("Inventory Settings")] [SerializeField]
+    private int maxInventorySize = 50;
 
-    [Header("Current Inventory")]
-    [SerializeField] private List<CaughtFish> caughtFish = new List<CaughtFish>();
-    [SerializeField] private int totalValue = 0;
+    [Header("Current Inventory")] [SerializeField]
+    private List<CaughtFish> caughtFish = new();
 
-    public System.Action<CaughtFish> OnFishAdded;
-    public System.Action<CaughtFish> OnFishSold;
-    public System.Action<int> OnValueChanged;
+    [SerializeField] private int totalValue;
+
+    public Action<CaughtFish> OnFishAdded;
+    public Action<CaughtFish> OnFishSold;
+    public Action<int> OnValueChanged;
 
     private void Start()
     {
         // Subscribe to fishing events
-        FishingController fishingController = FindObjectOfType<FishingController>();
-        if (fishingController != null)
-        {
-            fishingController.OnFishCaught += OnFishCaughtHandler;
-        }
+        var fishingController = FindObjectOfType<FishingController>();
+        if (fishingController != null) fishingController.OnFishCaught += OnFishCaughtHandler;
     }
 
     private void OnFishCaughtHandler(FishData fishData, float weight)
@@ -55,7 +54,7 @@ public class InventorySystem : MonoBehaviour
             return false;
         }
 
-        CaughtFish newCatch = new CaughtFish(fishData, weight);
+        var newCatch = new CaughtFish(fishData, weight);
         caughtFish.Add(newCatch);
         totalValue += newCatch.value;
 
@@ -85,8 +84,8 @@ public class InventorySystem : MonoBehaviour
 
     public void SellAllFish()
     {
-        int soldValue = 0;
-        int soldCount = caughtFish.Count;
+        var soldValue = 0;
+        var soldCount = caughtFish.Count;
 
         foreach (var fish in caughtFish.ToList())
         {
@@ -142,12 +141,10 @@ public class InventorySystem : MonoBehaviour
         var counts = new Dictionary<string, int>();
 
         foreach (var fish in caughtFish)
-        {
             if (counts.ContainsKey(fish.fishData.fishName))
                 counts[fish.fishData.fishName]++;
             else
                 counts[fish.fishData.fishName] = 1;
-        }
 
         return counts;
     }
@@ -165,7 +162,7 @@ public class InventorySystem : MonoBehaviour
     }
 }
 
-[System.Serializable]
+[Serializable]
 public class InventoryStats
 {
     public int totalFishCaught;

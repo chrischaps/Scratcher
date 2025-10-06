@@ -4,13 +4,13 @@ using UnityEngine.Tilemaps;
 [CreateAssetMenu(fileName = "WaterTile", menuName = "Fishing Game/Water Tile")]
 public class WaterTile : NormalTile
 {
-    [Header("Water Properties")]
-    public WaterType waterType = WaterType.Pond;
+    [Header("Water Properties")] public WaterType waterType = WaterType.Pond;
+
     public float fishingSuccessModifier = 1f;
     public bool generateWaterZone = true;
 
-    [Header("Animation")]
-    public Sprite[] animationSprites;
+    [Header("Animation")] public Sprite[] animationSprites;
+
     public float animationSpeed = 1f;
     public bool randomStartFrame = true;
 
@@ -30,7 +30,7 @@ public class WaterTile : NormalTile
         // Handle animation
         if (animationSprites != null && animationSprites.Length > 0)
         {
-            int frameIndex = GetAnimationFrame(position);
+            var frameIndex = GetAnimationFrame(position);
             tileData.sprite = animationSprites[frameIndex];
         }
     }
@@ -40,12 +40,12 @@ public class WaterTile : NormalTile
         if (animationSprites == null || animationSprites.Length == 0)
             return 0;
 
-        float time = Time.time * animationSpeed;
+        var time = Time.time * animationSpeed;
 
         if (randomStartFrame)
         {
             // Use position to offset animation timing
-            float offset = (position.x + position.y) * 0.1f;
+            var offset = (position.x + position.y) * 0.1f;
             time += offset;
         }
 
@@ -57,13 +57,21 @@ public class WaterTile : NormalTile
         base.RefreshTile(position, tilemap);
 
         // Refresh animation
-        if (animationSprites != null && animationSprites.Length > 1)
-        {
-            tilemap.RefreshTile(position);
-        }
+        if (animationSprites != null && animationSprites.Length > 1) tilemap.RefreshTile(position);
     }
 
-    public WaterType GetWaterType() => waterType;
-    public float GetFishingSuccessModifier() => fishingSuccessModifier;
-    public bool ShouldGenerateWaterZone() => generateWaterZone;
+    public WaterType GetWaterType()
+    {
+        return waterType;
+    }
+
+    public float GetFishingSuccessModifier()
+    {
+        return fishingSuccessModifier;
+    }
+
+    public bool ShouldGenerateWaterZone()
+    {
+        return generateWaterZone;
+    }
 }

@@ -1,35 +1,57 @@
- using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class WaterZone : MonoBehaviour
 {
-    [Header("Water Zone Properties")]
-    [SerializeField] private WaterType waterType = WaterType.Pond;
+    [Header("Water Zone Properties")] [SerializeField]
+    private WaterType waterType = WaterType.Pond;
+
     [SerializeField] private string zoneName = "Fishing Spot";
 
-    [Header("Fish Population")]
-    [SerializeField] private List<FishSpawnData> availableFish = new List<FishSpawnData>();
+    [Header("Fish Population")] [SerializeField]
+    private List<FishSpawnData> availableFish = new();
 
-    [Header("Environmental Factors")]
-    [SerializeField] private float baseSuccessRate = 0.7f;
+    [Header("Environmental Factors")] [SerializeField]
+    private float baseSuccessRate = 0.7f;
+
     [SerializeField] private WeatherCondition currentWeather = WeatherCondition.Sunny;
 
     private GameTimeManager timeManager;
 
-    [System.Serializable]
-    public class FishSpawnData
-    {
-        public FishData fishData;
-        [Range(0f, 1f)]
-        public float spawnWeight = 1f;
-        [Range(0f, 1f)]
-        public float currentPopulation = 1f; // Depletes with fishing
-    }
-
     private void Start()
     {
         timeManager = FindObjectOfType<GameTimeManager>();
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = new Color(0, 0.5f, 1f, 0.3f);
+
+        var col = GetComponent<Collider2D>();
+        if (col != null)
+            Gizmos.DrawCube(transform.position, col.bounds.size);
+        else
+            Gizmos.DrawSphere(transform.position, 2f);
+
+        // Draw water type indicator
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireCube(transform.position + Vector3.up * 1.5f, Vector3.one * 0.5f);
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            // Notify UI that player entered fishing zone
+            var fishingController = other.GetComponent<FishingController>();
+            if (fishingController != null)
+            {
+                // Could trigger zone info display
+            }
+        }
     }
 
     public FishData TryGetFish()
@@ -42,10 +64,10 @@ public class WaterZone : MonoBehaviour
         if (eligibleFish.Count == 0) return null;
 
         // Calculate weighted selection
-        float totalWeight = eligibleFish.Sum(f => f.spawnWeight * f.currentPopulation);
-        float randomValue = Random.Range(0f, totalWeight);
+        var totalWeight = eligibleFish.Sum(f => f.spawnWeight * f.currentPopulation);
+        var randomValue = Random.Range(0f, totalWeight);
 
-        float currentWeight = 0f;
+        var currentWeight = 0f;
         foreach (var fishSpawn in eligibleFish)
         {
             currentWeight += fishSpawn.spawnWeight * fishSpawn.currentPopulation;
@@ -58,6 +80,7 @@ public class WaterZone : MonoBehaviour
                     fishSpawn.currentPopulation = Mathf.Max(0.1f, fishSpawn.currentPopulation - 0.05f);
                     return fishSpawn.fishData;
                 }
+
                 break;
             }
         }
@@ -67,11 +90,11 @@ public class WaterZone : MonoBehaviour
 
     private List<FishSpawnData> GetEligibleFish()
     {
-        TimeOfDay currentTime = GetCurrentTimeOfDay();
+        var currentTime = GetCurrentTimeOfDay();
 
         return availableFish.Where(fishSpawn =>
         {
-            FishData fish = fishSpawn.fishData;
+            var fish = fishSpawn.fishData;
 
             // Check time availability
             if (fish.availableTimes.Length > 0 && !fish.availableTimes.Contains(currentTime))
@@ -95,7 +118,7 @@ public class WaterZone : MonoBehaviour
 
     private bool IsCatchSuccessful(FishData fish)
     {
-        float successRate = baseSuccessRate;
+        var successRate = baseSuccessRate;
 
         // Adjust based on fish difficulty (higher difficulty = lower success rate)
         successRate -= (fish.difficulty - 1) * 0.05f;
@@ -108,7 +131,7 @@ public class WaterZone : MonoBehaviour
             successRate += 0.15f;
 
         // Time bonus
-        TimeOfDay currentTime = GetCurrentTimeOfDay();
+        var currentTime = GetCurrentTimeOfDay();
         if (fish.availableTimes.Length > 0 && fish.availableTimes.Contains(currentTime))
             successRate += 0.1f;
 
@@ -128,9 +151,7 @@ public class WaterZone : MonoBehaviour
     public void RestockFish()
     {
         foreach (var fishSpawn in availableFish)
-        {
             fishSpawn.currentPopulation = Mathf.Min(1f, fishSpawn.currentPopulation + 0.1f);
-        }
     }
 
     public void SetWeather(WeatherCondition weather)
@@ -140,39 +161,17 @@ public class WaterZone : MonoBehaviour
 
     public string GetZoneInfo()
     {
-        int availableSpecies = GetEligibleFish().Count;
+        var availableSpecies = GetEligibleFish().Count;
         return $"{zoneName} ({waterType})\nAvailable Species: {availableSpecies}";
     }
 
-    private void OnTriggerEnter2D(Collider2D other)
+    [Serializable]
+    public class FishSpawnData
     {
-        if (other.CompareTag("Player"))
-        {
-            // Notify UI that player entered fishing zone
-            var fishingController = other.GetComponent<FishingController>();
-            if (fishingController != null)
-            {
-                // Could trigger zone info display
-            }
-        }
-    }
+        public FishData fishData;
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = new Color(0, 0.5f, 1f, 0.3f);
+        [Range(0f, 1f)] public float spawnWeight = 1f;
 
-        Collider2D col = GetComponent<Collider2D>();
-        if (col != null)
-        {
-            Gizmos.DrawCube(transform.position, col.bounds.size);
-        }
-        else
-        {
-            Gizmos.DrawSphere(transform.position, 2f);
-        }
-
-        // Draw water type indicator
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(transform.position + Vector3.up * 1.5f, Vector3.one * 0.5f);
+        [Range(0f, 1f)] public float currentPopulation = 1f; // Depletes with fishing
     }
 }

@@ -1,39 +1,45 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
-using System.Collections;
+using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 
 /// <summary>
-/// Integrates the new UI Toolkit system with existing game systems
-/// Handles the transition and provides compatibility layer
+///     Integrates the new UI Toolkit system with existing game systems
+///     Handles the transition and provides compatibility layer
 /// </summary>
 public class UIIntegrationManager : MonoBehaviour
 {
-    [Header("UI Documents")]
-    [SerializeField] private UIDocument gameHUDDocument;
+    [Header("UI Documents")] [SerializeField]
+    private UIDocument gameHUDDocument;
+
     [SerializeField] private UIDocument debugUIDocument;
     [SerializeField] private UIDocument mainMenuDocument;
 
-    [Header("Integration Settings")]
-    [SerializeField] private bool replaceOldUI = true;
+    [Header("Integration Settings")] [SerializeField]
+    private bool replaceOldUI = true;
+
     [SerializeField] private bool enableDebugMode = true;
     [SerializeField] private KeyCode debugToggleKey = KeyCode.F1;
+    private DebugUIManager debugUI;
+    private FishingController fishingController;
 
     // UI Controllers
     private GameHUDController gameHUD;
-    private DebugUIManager debugUI;
-    private MainMenuController mainMenu;
-
-    // Legacy UI components to replace
-    private FishingGameUI legacyFishingUI;
 
     // Game system references
     private GameManager gameManager;
-    private FishingController fishingController;
     private InventorySystem inventorySystem;
+
+    // Legacy UI components to replace
+    private FishingGameUI legacyFishingUI;
+    private MainMenuController mainMenu;
     private GameTimeManager timeManager;
 
     public static UIIntegrationManager Instance { get; private set; }
+
+    public bool IsDebugUIVisible => debugUI != null && debugUI.IsVisible;
+
+    public bool IsFishingUIVisible => gameHUD != null && gameHUD.IsFishingUIVisible;
 
     private void Awake()
     {
@@ -46,6 +52,29 @@ public class UIIntegrationManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+    }
+
+    private void Update()
+    {
+        HandleDebugInput();
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from events
+        if (inventorySystem != null)
+        {
+            inventorySystem.OnFishAdded -= OnFishAdded;
+            inventorySystem.OnValueChanged -= OnInventoryValueChanged;
+        }
+
+        if (timeManager != null)
+        {
+            timeManager.OnTimeOfDayChanged -= OnTimeOfDayChanged;
+            timeManager.OnDayChanged -= OnDayChanged;
+        }
+
+        if (Instance == this) Instance = null;
     }
 
     private void InitializeUIIntegration()
@@ -63,10 +92,7 @@ public class UIIntegrationManager : MonoBehaviour
         IntegrateWithGameSystems();
 
         // Replace legacy UI if requested
-        if (replaceOldUI)
-        {
-            ReplaceLegacyUI();
-        }
+        if (replaceOldUI) ReplaceLegacyUI();
 
         Debug.Log("UI Integration Manager initialized successfully");
     }
@@ -77,46 +103,32 @@ public class UIIntegrationManager : MonoBehaviour
         if (gameHUDDocument == null)
         {
             gameHUDDocument = FindUIDocument("GameHUD");
-            if (gameHUDDocument == null)
-            {
-                gameHUDDocument = CreateUIDocument("GameHUD", "GameHUD");
-            }
+            if (gameHUDDocument == null) gameHUDDocument = CreateUIDocument("GameHUD", "GameHUD");
         }
 
         // Debug UI Document
         if (debugUIDocument == null && enableDebugMode)
         {
             debugUIDocument = FindUIDocument("DebugPanel");
-            if (debugUIDocument == null)
-            {
-                debugUIDocument = CreateUIDocument("DebugPanel", "DebugPanel");
-            }
+            if (debugUIDocument == null) debugUIDocument = CreateUIDocument("DebugPanel", "DebugPanel");
         }
 
         // Main Menu Document (if in main menu scene)
-        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "MainMenu")
-        {
+        if (SceneManager.GetActiveScene().name == "MainMenu")
             if (mainMenuDocument == null)
             {
                 mainMenuDocument = FindUIDocument("MainMenu");
-                if (mainMenuDocument == null)
-                {
-                    mainMenuDocument = CreateUIDocument("MainMenu", "MainMenu");
-                }
+                if (mainMenuDocument == null) mainMenuDocument = CreateUIDocument("MainMenu", "MainMenu");
             }
-        }
     }
 
     private UIDocument FindUIDocument(string documentName)
     {
         var documents = FindObjectsOfType<UIDocument>();
         foreach (var doc in documents)
-        {
             if (doc.name == documentName || doc.gameObject.name == documentName)
-            {
                 return doc;
-            }
-        }
+
         return null;
     }
 
@@ -129,17 +141,12 @@ public class UIIntegrationManager : MonoBehaviour
 
         // Try to load the visual tree asset
         var visualTreeAsset = Resources.Load<VisualTreeAsset>($"UI/UXML/{assetName}");
-        if (visualTreeAsset != null)
-        {
-            document.visualTreeAsset = visualTreeAsset;
-        }
+        if (visualTreeAsset != null) document.visualTreeAsset = visualTreeAsset;
 
         // Try to load the style sheet
         var styleSheet = Resources.Load<StyleSheet>($"UI/USS/{assetName}");
         if (styleSheet != null && document.rootVisualElement != null)
-        {
             document.rootVisualElement.styleSheets.Add(styleSheet);
-        }
 
         return document;
     }
@@ -150,30 +157,21 @@ public class UIIntegrationManager : MonoBehaviour
         if (gameHUDDocument != null)
         {
             gameHUD = gameHUDDocument.GetComponent<GameHUDController>();
-            if (gameHUD == null)
-            {
-                gameHUD = gameHUDDocument.gameObject.AddComponent<GameHUDController>();
-            }
+            if (gameHUD == null) gameHUD = gameHUDDocument.gameObject.AddComponent<GameHUDController>();
         }
 
         // Debug UI Controller
         if (debugUIDocument != null && enableDebugMode)
         {
             debugUI = debugUIDocument.GetComponent<DebugUIManager>();
-            if (debugUI == null)
-            {
-                debugUI = debugUIDocument.gameObject.AddComponent<DebugUIManager>();
-            }
+            if (debugUI == null) debugUI = debugUIDocument.gameObject.AddComponent<DebugUIManager>();
         }
 
         // Main Menu Controller
         if (mainMenuDocument != null)
         {
             mainMenu = mainMenuDocument.GetComponent<MainMenuController>();
-            if (mainMenu == null)
-            {
-                mainMenu = mainMenuDocument.gameObject.AddComponent<MainMenuController>();
-            }
+            if (mainMenu == null) mainMenu = mainMenuDocument.gameObject.AddComponent<MainMenuController>();
         }
     }
 
@@ -195,10 +193,7 @@ public class UIIntegrationManager : MonoBehaviour
         {
             // Connect UI Manager to game manager
             var uiManager = gameManager.GetComponent<UIManager>();
-            if (uiManager == null)
-            {
-                uiManager = gameManager.gameObject.AddComponent<UIManager>();
-            }
+            if (uiManager == null) uiManager = gameManager.gameObject.AddComponent<UIManager>();
 
             // Register UI panels with UIManager
             if (gameHUD != null) uiManager.RegisterPanel(gameHUD);
@@ -261,18 +256,11 @@ public class UIIntegrationManager : MonoBehaviour
         // Find and disable other legacy UI components
         var legacyCanvases = FindObjectsOfType<Canvas>();
         foreach (var canvas in legacyCanvases)
-        {
             if (canvas.name.Contains("Legacy") || canvas.name.Contains("Old"))
             {
                 canvas.gameObject.SetActive(false);
                 Debug.Log($"Disabled legacy canvas: {canvas.name}");
             }
-        }
-    }
-
-    private void Update()
-    {
-        HandleDebugInput();
     }
 
     private void HandleDebugInput()
@@ -280,20 +268,15 @@ public class UIIntegrationManager : MonoBehaviour
         if (enableDebugMode)
         {
             // Use new Input System
-            Keyboard keyboard = Keyboard.current;
+            var keyboard = Keyboard.current;
             if (keyboard != null)
             {
-                Key targetKey = ConvertKeyCodeToKey(debugToggleKey);
+                var targetKey = ConvertKeyCodeToKey(debugToggleKey);
                 if (keyboard[targetKey].wasPressedThisFrame)
                 {
                     if (debugUI != null)
-                    {
                         debugUI.TogglePanel();
-                    }
-                    else if (UIManager.Instance != null)
-                    {
-                        UIManager.Instance.TogglePanel("DebugPanel");
-                    }
+                    else if (UIManager.Instance != null) UIManager.Instance.TogglePanel("DebugPanel");
                 }
             }
         }
@@ -335,13 +318,11 @@ public class UIIntegrationManager : MonoBehaviour
     private void OnFishAdded(CaughtFish fish)
     {
         if (NotificationManager.Instance != null)
-        {
             NotificationManager.Instance.ShowFishCaughtNotification(
                 fish.fishData.fishName,
                 fish.weight,
                 fish.value
             );
-        }
     }
 
     private void OnInventoryValueChanged(int newValue)
@@ -349,40 +330,32 @@ public class UIIntegrationManager : MonoBehaviour
         // HUD will update automatically through its own Update loop
         // This could trigger special notifications for milestones
         if (newValue > 0 && newValue % 1000 == 0)
-        {
             if (NotificationManager.Instance != null)
-            {
                 NotificationManager.Instance.ShowNotification(
                     "Milestone Reached!",
                     $"Your total catch value has reached {newValue} coins!",
                     NotificationManager.NotificationType.Success,
                     4f
                 );
-            }
-        }
     }
 
     private void OnTimeOfDayChanged(TimeOfDay newTimeOfDay)
     {
         // Show time of day notifications
         if (NotificationManager.Instance != null)
-        {
             NotificationManager.Instance.ShowTimeOfDayNotification(newTimeOfDay.ToString());
-        }
     }
 
     private void OnDayChanged(int newDay)
     {
         // Show new day notification
         if (NotificationManager.Instance != null)
-        {
             NotificationManager.Instance.ShowNotification(
                 "New Day",
                 $"Day {newDay} has begun!",
                 NotificationManager.NotificationType.Info,
                 3f
             );
-        }
     }
 
     // Public interface methods
@@ -427,40 +400,23 @@ public class UIIntegrationManager : MonoBehaviour
         if (gameHUD != null)
             gameHUD.SetLocation(location);
     }
-
-    public bool IsDebugUIVisible => debugUI != null && debugUI.IsVisible;
-
-    public bool IsFishingUIVisible => gameHUD != null && gameHUD.IsFishingUIVisible;
-
-    private void OnDestroy()
-    {
-        // Unsubscribe from events
-        if (inventorySystem != null)
-        {
-            inventorySystem.OnFishAdded -= OnFishAdded;
-            inventorySystem.OnValueChanged -= OnInventoryValueChanged;
-        }
-
-        if (timeManager != null)
-        {
-            timeManager.OnTimeOfDayChanged -= OnTimeOfDayChanged;
-            timeManager.OnDayChanged -= OnDayChanged;
-        }
-
-        if (Instance == this)
-        {
-            Instance = null;
-        }
-    }
 }
 
 /// <summary>
-/// Integration component for connecting fishing controller with new UI system
+///     Integration component for connecting fishing controller with new UI system
 /// </summary>
 public class FishingUIIntegration : MonoBehaviour
 {
-    private GameHUDController gameHUD;
     private FishingController fishingController;
+    private GameHUDController gameHUD;
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from events when destroyed
+        // fishingController.OnFishingStarted -= OnFishingStarted;
+        // fishingController.OnFishingEnded -= OnFishingEnded;
+        // fishingController.OnFishingProgressChanged -= OnFishingProgressChanged;
+    }
 
     public void Initialize(GameHUDController hud, FishingController fishing)
     {
@@ -486,25 +442,11 @@ public class FishingUIIntegration : MonoBehaviour
 
     private void OnFishingEnded()
     {
-        if (gameHUD != null)
-        {
-            gameHUD.HideFishingUI();
-        }
+        if (gameHUD != null) gameHUD.HideFishingUI();
     }
 
     private void OnFishingProgressChanged(float progress)
     {
-        if (gameHUD != null)
-        {
-            gameHUD.UpdateFishingProgress(progress);
-        }
-    }
-
-    private void OnDestroy()
-    {
-        // Unsubscribe from events when destroyed
-        // fishingController.OnFishingStarted -= OnFishingStarted;
-        // fishingController.OnFishingEnded -= OnFishingEnded;
-        // fishingController.OnFishingProgressChanged -= OnFishingProgressChanged;
+        if (gameHUD != null) gameHUD.UpdateFishingProgress(progress);
     }
 }

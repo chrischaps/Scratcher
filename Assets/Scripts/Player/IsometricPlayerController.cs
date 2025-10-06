@@ -3,18 +3,22 @@ using UnityEngine.InputSystem;
 
 public class IsometricPlayerController : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField] protected float moveSpeed = 5f;
+    [Header("Movement Settings")] [SerializeField]
+    protected float moveSpeed = 5f;
+
     [SerializeField] protected float sprintMultiplier = 1.5f;
 
-    [Header("Animation")]
-    [SerializeField] protected Animator animator;
+    [Header("Animation")] [SerializeField] protected Animator animator;
+
     [SerializeField] protected SpriteRenderer spriteRenderer;
+    protected bool isSprinting;
 
     protected Vector2 moveInput;
-    protected bool isSprinting;
-    protected Rigidbody2D rb;
     private PlayerInput playerInput;
+    protected Rigidbody2D rb;
+
+    public bool IsMoving => moveInput.magnitude > 0.1f;
+    public bool IsSprinting => isSprinting;
 
     protected virtual void Awake()
     {
@@ -35,6 +39,17 @@ public class IsometricPlayerController : MonoBehaviour
             spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void Update()
+    {
+        UpdateAnimations();
+        HandleSpriteDirection();
+    }
+
+    private void FixedUpdate()
+    {
+        HandleMovement();
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
@@ -48,24 +63,13 @@ public class IsometricPlayerController : MonoBehaviour
             isSprinting = false;
     }
 
-    private void FixedUpdate()
-    {
-        HandleMovement();
-    }
-
-    private void Update()
-    {
-        UpdateAnimations();
-        HandleSpriteDirection();
-    }
-
     private void HandleMovement()
     {
         // Convert input to isometric movement
-        Vector2 isometricMovement = ConvertToIsometric(moveInput);
+        var isometricMovement = ConvertToIsometric(moveInput);
 
         // Apply speed and sprint modifier
-        float currentSpeed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
+        var currentSpeed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
 
         // Move the player
         rb.linearVelocity = isometricMovement * currentSpeed;
@@ -75,7 +79,7 @@ public class IsometricPlayerController : MonoBehaviour
     {
         // Convert standard input to isometric coordinates
         // For 2D isometric, we typically rotate the movement by 45 degrees
-        Vector2 isometric = new Vector2(
+        var isometric = new Vector2(
             (input.x - input.y) * 0.5f,
             (input.x + input.y) * 0.5f
         );
@@ -87,7 +91,7 @@ public class IsometricPlayerController : MonoBehaviour
     {
         if (animator == null) return;
 
-        bool isMoving = moveInput.magnitude > 0.1f;
+        var isMoving = moveInput.magnitude > 0.1f;
         animator.SetBool("IsMoving", isMoving);
         animator.SetBool("IsSprinting", isSprinting && isMoving);
 
@@ -107,7 +111,8 @@ public class IsometricPlayerController : MonoBehaviour
             spriteRenderer.flipX = true;
     }
 
-    public bool IsMoving => moveInput.magnitude > 0.1f;
-    public Vector2 GetMoveInput() => moveInput;
-    public bool IsSprinting => isSprinting;
+    public Vector2 GetMoveInput()
+    {
+        return moveInput;
+    }
 }

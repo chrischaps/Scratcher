@@ -1,40 +1,46 @@
+using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
 public class FishingGameUI : MonoBehaviour
 {
-    [Header("Main UI Elements")]
-    [SerializeField] private GameObject mainUI;
+    [Header("Main UI Elements")] [SerializeField]
+    private GameObject mainUI;
+
     [SerializeField] private TextMeshProUGUI timeDisplay;
     [SerializeField] private TextMeshProUGUI inventoryCountText;
     [SerializeField] private TextMeshProUGUI totalValueText;
 
-    [Header("Fishing UI")]
-    [SerializeField] private GameObject fishingPanel;
+    [Header("Fishing UI")] [SerializeField]
+    private GameObject fishingPanel;
+
     [SerializeField] private TextMeshProUGUI fishingInstructions;
     [SerializeField] private Slider fishingProgress;
 
-    [Header("Water Zone UI")]
-    [SerializeField] private GameObject waterZoneInfo;
+    [Header("Water Zone UI")] [SerializeField]
+    private GameObject waterZoneInfo;
+
     [SerializeField] private TextMeshProUGUI waterZoneText;
 
-    [Header("Catch Notification")]
-    [SerializeField] private GameObject catchNotification;
+    [Header("Catch Notification")] [SerializeField]
+    private GameObject catchNotification;
+
     [SerializeField] private Image fishImage;
     [SerializeField] private TextMeshProUGUI fishNameText;
     [SerializeField] private TextMeshProUGUI fishWeightText;
     [SerializeField] private TextMeshProUGUI fishValueText;
 
-    [Header("Inventory Panel")]
-    [SerializeField] private GameObject inventoryPanel;
+    [Header("Inventory Panel")] [SerializeField]
+    private GameObject inventoryPanel;
+
     [SerializeField] private Transform inventoryContent;
     [SerializeField] private GameObject fishItemPrefab;
     [SerializeField] private Button inventoryToggleButton;
+    private InventorySystem inventorySystem;
+    private bool isInventoryOpen;
 
     private GameTimeManager timeManager;
-    private InventorySystem inventorySystem;
-    private bool isInventoryOpen = false;
 
     private void Start()
     {
@@ -43,6 +49,24 @@ public class FishingGameUI : MonoBehaviour
 
         SetupUI();
         SubscribeToEvents();
+    }
+
+    private void Update()
+    {
+        UpdateTimeDisplay();
+        UpdateInventoryDisplay();
+    }
+
+    private void OnDestroy()
+    {
+        if (timeManager != null)
+            timeManager.OnTimeOfDayChanged -= OnTimeOfDayChanged;
+
+        if (inventorySystem != null)
+        {
+            inventorySystem.OnFishAdded -= ShowCatchNotification;
+            inventorySystem.OnValueChanged -= OnValueChanged;
+        }
     }
 
     private void SetupUI()
@@ -65,10 +89,7 @@ public class FishingGameUI : MonoBehaviour
 
     private void SubscribeToEvents()
     {
-        if (timeManager != null)
-        {
-            timeManager.OnTimeOfDayChanged += OnTimeOfDayChanged;
-        }
+        if (timeManager != null) timeManager.OnTimeOfDayChanged += OnTimeOfDayChanged;
 
         if (inventorySystem != null)
         {
@@ -87,18 +108,10 @@ public class FishingGameUI : MonoBehaviour
         UpdateInventoryDisplay();
     }
 
-    private void Update()
-    {
-        UpdateTimeDisplay();
-        UpdateInventoryDisplay();
-    }
-
     private void UpdateTimeDisplay()
     {
         if (timeManager != null && timeDisplay != null)
-        {
             timeDisplay.text = $"Day {timeManager.GetCurrentDay()} - {timeManager.GetTimeString()}";
-        }
     }
 
     private void UpdateInventoryDisplay()
@@ -156,7 +169,7 @@ public class FishingGameUI : MonoBehaviour
         StartCoroutine(DisplayCatchNotification(fish));
     }
 
-    private System.Collections.IEnumerator DisplayCatchNotification(CaughtFish fish)
+    private IEnumerator DisplayCatchNotification(CaughtFish fish)
     {
         if (fishImage != null && fish.fishData.fishSprite != null)
             fishImage.sprite = fish.fishData.fishSprite;
@@ -193,22 +206,16 @@ public class FishingGameUI : MonoBehaviour
             return;
 
         // Clear existing items
-        foreach (Transform child in inventoryContent)
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (Transform child in inventoryContent) Destroy(child.gameObject);
 
         // Add fish items
         var caughtFish = inventorySystem.GetCaughtFish();
-        foreach (var fish in caughtFish)
-        {
-            CreateFishInventoryItem(fish);
-        }
+        foreach (var fish in caughtFish) CreateFishInventoryItem(fish);
     }
 
     private void CreateFishInventoryItem(CaughtFish fish)
     {
-        GameObject item = Instantiate(fishItemPrefab, inventoryContent);
+        var item = Instantiate(fishItemPrefab, inventoryContent);
 
         // Set up the item (assuming the prefab has the right components)
         var nameText = item.GetComponentInChildren<TextMeshProUGUI>();
@@ -222,23 +229,10 @@ public class FishingGameUI : MonoBehaviour
         // Add sell button functionality
         var sellButton = item.GetComponentInChildren<Button>();
         if (sellButton != null)
-        {
-            sellButton.onClick.AddListener(() => {
+            sellButton.onClick.AddListener(() =>
+            {
                 inventorySystem.SellFish(fish);
                 RefreshInventoryDisplay();
             });
-        }
-    }
-
-    private void OnDestroy()
-    {
-        if (timeManager != null)
-            timeManager.OnTimeOfDayChanged -= OnTimeOfDayChanged;
-
-        if (inventorySystem != null)
-        {
-            inventorySystem.OnFishAdded -= ShowCatchNotification;
-            inventorySystem.OnValueChanged -= OnValueChanged;
-        }
     }
 }

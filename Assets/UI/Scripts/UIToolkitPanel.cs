@@ -3,12 +3,16 @@ using UnityEngine.UIElements;
 
 public abstract class UIToolkitPanel : MonoBehaviour
 {
-    [Header("UI Document")]
-    [SerializeField] protected UIDocument uiDocument;
+    [Header("UI Document")] [SerializeField]
+    protected UIDocument uiDocument;
+
     [SerializeField] protected string panelName;
+    protected bool isInitialized;
 
     protected VisualElement root;
-    protected bool isInitialized = false;
+
+    public bool IsVisible => root != null && root.style.display == DisplayStyle.Flex;
+    public bool IsInitialized => isInitialized;
 
     protected virtual void Awake()
     {
@@ -46,8 +50,14 @@ public abstract class UIToolkitPanel : MonoBehaviour
 
     protected abstract void BindUIElements();
     protected abstract void SetupEventHandlers();
-    protected virtual void InitializeData() { }
-    protected virtual void OnPanelInitialized() { }
+
+    protected virtual void InitializeData()
+    {
+    }
+
+    protected virtual void OnPanelInitialized()
+    {
+    }
 
     public virtual void ShowPanel()
     {
@@ -65,7 +75,7 @@ public abstract class UIToolkitPanel : MonoBehaviour
     {
         if (root != null)
         {
-            bool isVisible = root.style.display == DisplayStyle.Flex;
+            var isVisible = root.style.display == DisplayStyle.Flex;
             if (isVisible)
                 HidePanel();
             else
@@ -91,7 +101,4 @@ public abstract class UIToolkitPanel : MonoBehaviour
         if (element is INotifyValueChanged<T> valueElement)
             valueElement.value = value;
     }
-
-    public bool IsVisible => root != null && root.style.display == DisplayStyle.Flex;
-    public bool IsInitialized => isInitialized;
 }

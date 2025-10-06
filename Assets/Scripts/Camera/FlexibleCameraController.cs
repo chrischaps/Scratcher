@@ -3,34 +3,40 @@ using UnityEngine.InputSystem;
 
 public class FlexibleCameraController : MonoBehaviour
 {
-    [Header("Target Settings")]
-    [SerializeField] private Transform target;
-    [SerializeField] private Vector3 offset = new Vector3(0, 0, -10);
+    [Header("Target Settings")] [SerializeField]
+    private Transform target;
 
-    [Header("Camera Type")]
-    [SerializeField] private GridType cameraType = GridType.Isometric;
+    [SerializeField] private Vector3 offset = new(0, 0, -10);
 
-    [Header("Camera Angles")]
-    [SerializeField] private Vector3 isometricRotation = new Vector3(30f, 45f, 0f);
-    [SerializeField] private Vector3 topDownRotation = new Vector3(60f, 0f, 0f);
-    [SerializeField] private bool useCustomAngles = false;
+    [Header("Camera Type")] [SerializeField]
+    private GridType cameraType = GridType.Isometric;
 
-    [Header("Custom Angle Settings")]
-    [SerializeField, Range(0f, 90f)] private float topDownAngle = 60f;
-    [SerializeField, Range(0f, 360f)] private float topDownYRotation = 0f;
-    [SerializeField, Range(-45f, 45f)] private float topDownZRotation = 0f;
+    [Header("Camera Angles")] [SerializeField]
+    private Vector3 isometricRotation = new(30f, 45f, 0f);
 
-    [Header("Follow Settings")]
-    [SerializeField] private float followSpeed = 5f;
+    [SerializeField] private Vector3 topDownRotation = new(60f, 0f, 0f);
+    [SerializeField] private bool useCustomAngles;
+
+    [Header("Custom Angle Settings")] [SerializeField] [Range(0f, 90f)]
+    private float topDownAngle = 60f;
+
+    [SerializeField] [Range(0f, 360f)] private float topDownYRotation;
+    [SerializeField] [Range(-45f, 45f)] private float topDownZRotation;
+
+    [Header("Follow Settings")] [SerializeField]
+    private float followSpeed = 5f;
+
     [SerializeField] private bool useSmoothing = true;
 
-    [Header("Bounds (Optional)")]
-    [SerializeField] private bool useBounds = false;
-    [SerializeField] private Vector2 minBounds = new Vector2(-10, -10);
-    [SerializeField] private Vector2 maxBounds = new Vector2(10, 10);
+    [Header("Bounds (Optional)")] [SerializeField]
+    private bool useBounds;
 
-    [Header("Zoom Settings")]
-    [SerializeField] private float minZoom = 3f;
+    [SerializeField] private Vector2 minBounds = new(-10, -10);
+    [SerializeField] private Vector2 maxBounds = new(10, 10);
+
+    [Header("Zoom Settings")] [SerializeField]
+    private float minZoom = 3f;
+
     [SerializeField] private float maxZoom = 8f;
     [SerializeField] private float zoomSpeed = 2f;
 
@@ -65,6 +71,17 @@ public class FlexibleCameraController : MonoBehaviour
         HandleZoom();
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        if (useBounds)
+        {
+            Gizmos.color = Color.yellow;
+            var center = new Vector3((minBounds.x + maxBounds.x) * 0.5f, (minBounds.y + maxBounds.y) * 0.5f, 0);
+            var size = new Vector3(maxBounds.x - minBounds.x, maxBounds.y - minBounds.y, 0);
+            Gizmos.DrawWireCube(center, size);
+        }
+    }
+
     private void SetupView()
     {
         // Always use orthographic camera for 2D games
@@ -85,13 +102,9 @@ public class FlexibleCameraController : MonoBehaviour
         else // Rectangular/TopDown
         {
             if (useCustomAngles)
-            {
                 targetRotation = new Vector3(topDownAngle, topDownYRotation, topDownZRotation);
-            }
             else
-            {
                 targetRotation = topDownRotation;
-            }
         }
 
         transform.rotation = Quaternion.Euler(targetRotation);
@@ -99,7 +112,7 @@ public class FlexibleCameraController : MonoBehaviour
 
     private void HandleCameraFollow()
     {
-        Vector3 targetPosition = target.position + offset;
+        var targetPosition = target.position + offset;
 
         if (useBounds)
         {
@@ -108,20 +121,16 @@ public class FlexibleCameraController : MonoBehaviour
         }
 
         if (useSmoothing)
-        {
             transform.position = Vector3.Lerp(transform.position, targetPosition, followSpeed * Time.deltaTime);
-        }
         else
-        {
             transform.position = targetPosition;
-        }
     }
 
     private void HandleZoom()
     {
         // Handle zoom input using new Input System
-        Vector2 scrollInput = Mouse.current?.scroll.ReadValue() ?? Vector2.zero;
-        float scrollY = scrollInput.y / 120f; // Normalize scroll wheel input
+        var scrollInput = Mouse.current?.scroll.ReadValue() ?? Vector2.zero;
+        var scrollY = scrollInput.y / 120f; // Normalize scroll wheel input
 
         if (scrollY != 0)
         {
@@ -162,13 +171,9 @@ public class FlexibleCameraController : MonoBehaviour
 
         // Adjust offset based on camera type
         if (cameraType == GridType.Rectangular)
-        {
             offset = new Vector3(0, 0, -10); // Directly overhead
-        }
         else
-        {
             offset = new Vector3(0, 0, -10); // Isometric offset
-        }
     }
 
     public void ApplyLevelConfiguration(LevelConfiguration levelConfig)
@@ -200,30 +205,13 @@ public class FlexibleCameraController : MonoBehaviour
     public void SetTopDownAngle(float angle)
     {
         topDownAngle = Mathf.Clamp(angle, 0f, 90f);
-        if (cameraType == GridType.Rectangular)
-        {
-            SetCameraRotationForType(cameraType);
-        }
+        if (cameraType == GridType.Rectangular) SetCameraRotationForType(cameraType);
     }
 
     public void SetTopDownRotation(float yRotation, float zRotation = 0f)
     {
         topDownYRotation = yRotation;
         topDownZRotation = Mathf.Clamp(zRotation, -45f, 45f);
-        if (cameraType == GridType.Rectangular)
-        {
-            SetCameraRotationForType(cameraType);
-        }
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if (useBounds)
-        {
-            Gizmos.color = Color.yellow;
-            Vector3 center = new Vector3((minBounds.x + maxBounds.x) * 0.5f, (minBounds.y + maxBounds.y) * 0.5f, 0);
-            Vector3 size = new Vector3(maxBounds.x - minBounds.x, maxBounds.y - minBounds.y, 0);
-            Gizmos.DrawWireCube(center, size);
-        }
+        if (cameraType == GridType.Rectangular) SetCameraRotationForType(cameraType);
     }
 }

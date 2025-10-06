@@ -1,18 +1,24 @@
-using UnityEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 [CreateAssetMenu(fileName = "FishDatabase", menuName = "Fishing Game/Fish Database")]
 public class FishDatabase : ScriptableObject
 {
-    [Header("Fish Collection")]
-    [SerializeField] private List<FishData> allFish = new List<FishData>();
+    [Header("Fish Collection")] [SerializeField]
+    private List<FishData> allFish = new();
 
-    public List<FishData> GetAllFish() => allFish;
+    public List<FishData> GetAllFish()
+    {
+        return allFish;
+    }
 
     public FishData GetFishByName(string fishName)
     {
-        return allFish.FirstOrDefault(fish => fish.fishName.Equals(fishName, System.StringComparison.OrdinalIgnoreCase));
+        return allFish.FirstOrDefault(fish => fish.fishName.Equals(fishName, StringComparison.OrdinalIgnoreCase));
     }
 
     public List<FishData> GetFishByRarity(float minRarity, float maxRarity)
@@ -35,7 +41,10 @@ public class FishDatabase : ScriptableObject
         return allFish.Where(fish => fish.favoredWeather.Contains(weather)).ToList();
     }
 
-    public int GetTotalFishCount() => allFish.Count;
+    public int GetTotalFishCount()
+    {
+        return allFish.Count;
+    }
 
     public FishData GetRandomFish()
     {
@@ -52,40 +61,40 @@ public class FishDatabase : ScriptableObject
 
         // Common fish
         var bluegill = CreateFishData("Bluegill", "A common pond fish", 0.1f, 2, 0.3f, 1.2f, 5,
-            new TimeOfDay[] { TimeOfDay.Morning, TimeOfDay.Afternoon },
-            new WeatherCondition[] { WeatherCondition.Sunny, WeatherCondition.Cloudy },
-            new WaterType[] { WaterType.Pond, WaterType.Lake });
+            new[] { TimeOfDay.Morning, TimeOfDay.Afternoon },
+            new[] { WeatherCondition.Sunny, WeatherCondition.Cloudy },
+            new[] { WaterType.Pond, WaterType.Lake });
 
         var bass = CreateFishData("Largemouth Bass", "A popular sport fish", 0.3f, 4, 1f, 3f, 15,
-            new TimeOfDay[] { TimeOfDay.Dawn, TimeOfDay.Evening },
-            new WeatherCondition[] { WeatherCondition.Cloudy },
-            new WaterType[] { WaterType.Lake, WaterType.River });
+            new[] { TimeOfDay.Dawn, TimeOfDay.Evening },
+            new[] { WeatherCondition.Cloudy },
+            new[] { WaterType.Lake, WaterType.River });
 
         var trout = CreateFishData("Rainbow Trout", "Beautiful cold-water fish", 0.4f, 5, 0.8f, 2.5f, 20,
-            new TimeOfDay[] { TimeOfDay.Dawn, TimeOfDay.Morning },
-            new WeatherCondition[] { WeatherCondition.Cloudy, WeatherCondition.Rainy },
-            new WaterType[] { WaterType.River });
+            new[] { TimeOfDay.Dawn, TimeOfDay.Morning },
+            new[] { WeatherCondition.Cloudy, WeatherCondition.Rainy },
+            new[] { WaterType.River });
 
         var carp = CreateFishData("Common Carp", "Large bottom feeder", 0.2f, 3, 2f, 8f, 12,
-            new TimeOfDay[] { TimeOfDay.Morning, TimeOfDay.Afternoon, TimeOfDay.Evening },
-            new WeatherCondition[] { WeatherCondition.Sunny, WeatherCondition.Cloudy },
-            new WaterType[] { WaterType.Lake, WaterType.River });
+            new[] { TimeOfDay.Morning, TimeOfDay.Afternoon, TimeOfDay.Evening },
+            new[] { WeatherCondition.Sunny, WeatherCondition.Cloudy },
+            new[] { WaterType.Lake, WaterType.River });
 
         // Rare fish
         var salmon = CreateFishData("Atlantic Salmon", "Prized migratory fish", 0.7f, 7, 3f, 12f, 50,
-            new TimeOfDay[] { TimeOfDay.Dawn },
-            new WeatherCondition[] { WeatherCondition.Rainy },
-            new WaterType[] { WaterType.River, WaterType.Ocean });
+            new[] { TimeOfDay.Dawn },
+            new[] { WeatherCondition.Rainy },
+            new[] { WaterType.River, WaterType.Ocean });
 
         // Legendary fish
         var goldenTrout = CreateFishData("Golden Trout", "Legendary mountain fish", 0.95f, 9, 1.5f, 4f, 200,
-            new TimeOfDay[] { TimeOfDay.Dawn },
-            new WeatherCondition[] { WeatherCondition.Sunny },
-            new WaterType[] { WaterType.River });
+            new[] { TimeOfDay.Dawn },
+            new[] { WeatherCondition.Sunny },
+            new[] { WaterType.River });
 
         allFish.AddRange(new[] { bluegill, bass, trout, carp, salmon, goldenTrout });
 
-        UnityEditor.EditorUtility.SetDirty(this);
+        EditorUtility.SetDirty(this);
     }
 
     private FishData CreateFishData(string name, string desc, float rarity, int difficulty,

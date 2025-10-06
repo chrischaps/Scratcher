@@ -1,20 +1,23 @@
+using System;
 using UnityEngine;
 
 public class GameTimeManager : MonoBehaviour
 {
-    [Header("Time Settings")]
-    [SerializeField] private float dayLengthInMinutes = 24f; // Real minutes for a full day
+    [Header("Time Settings")] [SerializeField]
+    private float dayLengthInMinutes = 24f; // Real minutes for a full day
+
     [SerializeField] private bool autoAdvanceTime = true;
 
-    [Header("Current Time")]
-    [SerializeField, Range(0f, 24f)] private float currentTime = 8f; // 8 AM start
+    [Header("Current Time")] [SerializeField] [Range(0f, 24f)]
+    private float currentTime = 8f; // 8 AM start
 
-    public System.Action<TimeOfDay> OnTimeOfDayChanged;
-    public System.Action<int> OnDayChanged;
+    private int currentDay = 1;
 
     private TimeOfDay currentTimeOfDay = TimeOfDay.Morning;
-    private int currentDay = 1;
     private float dayLengthInSeconds;
+    public Action<int> OnDayChanged;
+
+    public Action<TimeOfDay> OnTimeOfDayChanged;
 
     private void Start()
     {
@@ -24,15 +27,12 @@ public class GameTimeManager : MonoBehaviour
 
     private void Update()
     {
-        if (autoAdvanceTime)
-        {
-            AdvanceTime();
-        }
+        if (autoAdvanceTime) AdvanceTime();
     }
 
     private void AdvanceTime()
     {
-        currentTime += (24f / dayLengthInSeconds) * Time.deltaTime;
+        currentTime += 24f / dayLengthInSeconds * Time.deltaTime;
 
         if (currentTime >= 24f)
         {
@@ -46,7 +46,7 @@ public class GameTimeManager : MonoBehaviour
 
     private void UpdateTimeOfDay()
     {
-        TimeOfDay newTimeOfDay = GetTimeOfDayFromHour(currentTime);
+        var newTimeOfDay = GetTimeOfDayFromHour(currentTime);
 
         if (newTimeOfDay != currentTimeOfDay)
         {
@@ -59,14 +59,13 @@ public class GameTimeManager : MonoBehaviour
     {
         if (hour >= 5f && hour < 8f)
             return TimeOfDay.Dawn;
-        else if (hour >= 8f && hour < 12f)
+        if (hour >= 8f && hour < 12f)
             return TimeOfDay.Morning;
-        else if (hour >= 12f && hour < 18f)
+        if (hour >= 12f && hour < 18f)
             return TimeOfDay.Afternoon;
-        else if (hour >= 18f && hour < 22f)
+        if (hour >= 18f && hour < 22f)
             return TimeOfDay.Evening;
-        else
-            return TimeOfDay.Night;
+        return TimeOfDay.Night;
     }
 
     public TimeOfDay GetCurrentTimeOfDay()
@@ -86,11 +85,11 @@ public class GameTimeManager : MonoBehaviour
 
     public string GetTimeString()
     {
-        int hours = Mathf.FloorToInt(currentTime);
-        int minutes = Mathf.FloorToInt((currentTime - hours) * 60);
+        var hours = Mathf.FloorToInt(currentTime);
+        var minutes = Mathf.FloorToInt((currentTime - hours) * 60);
 
-        string period = hours >= 12 ? "PM" : "AM";
-        int displayHours = hours;
+        var period = hours >= 12 ? "PM" : "AM";
+        var displayHours = hours;
         if (displayHours == 0) displayHours = 12;
         else if (displayHours > 12) displayHours -= 12;
 
@@ -112,6 +111,7 @@ public class GameTimeManager : MonoBehaviour
             currentDay++;
             OnDayChanged?.Invoke(currentDay);
         }
+
         UpdateTimeOfDay();
     }
 }

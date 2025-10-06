@@ -1,34 +1,32 @@
+using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class FishData
 {
-    [Header("Basic Info")]
-    public string fishName;
-    public Sprite fishSprite;
-    [TextArea(2, 4)]
-    public string description;
+    [Header("Basic Info")] public string fishName;
 
-    [Header("Fishing Properties")]
-    [Range(0f, 1f)]
+    public Sprite fishSprite;
+
+    [TextArea(2, 4)] public string description;
+
+    [Header("Fishing Properties")] [Range(0f, 1f)]
     public float rarity = 0.5f; // 0 = common, 1 = legendary
 
-    [Range(1, 10)]
-    public int difficulty = 5; // How hard to catch
+    [Range(1, 10)] public int difficulty = 5; // How hard to catch
 
     public float minWeight = 0.5f;
     public float maxWeight = 2f;
 
-    [Header("Value")]
-    public int baseValue = 10;
+    [Header("Value")] public int baseValue = 10;
 
-    [Header("Conditions")]
-    public TimeOfDay[] availableTimes;
+    [Header("Conditions")] public TimeOfDay[] availableTimes;
+
     public WeatherCondition[] favoredWeather;
     public WaterType[] waterTypes;
 }
 
-[System.Serializable]
+[Serializable]
 public enum TimeOfDay
 {
     Dawn,
@@ -38,7 +36,7 @@ public enum TimeOfDay
     Night
 }
 
-[System.Serializable]
+[Serializable]
 public enum WeatherCondition
 {
     Sunny,
@@ -47,7 +45,7 @@ public enum WeatherCondition
     Stormy
 }
 
-[System.Serializable]
+[Serializable]
 public enum WaterType
 {
     Pond,

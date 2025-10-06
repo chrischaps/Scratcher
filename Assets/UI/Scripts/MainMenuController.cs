@@ -1,75 +1,51 @@
-using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.SceneManagement;
+using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
+using Random = UnityEngine.Random;
 
 public class MainMenuController : UIToolkitPanel
 {
-    [Header("Scene Management")]
-    [SerializeField] private string gameSceneName = "Game";
+    [Header("Scene Management")] [SerializeField]
+    private string gameSceneName = "Game";
+
     [SerializeField] private string saveFileDirectory = "saves";
+    private Toggle autosaveToggle, tooltipsToggle, inputHintsToggle;
+
+    // Save data
+    private readonly List<SaveData> availableSaves = new();
+    private Slider cameraSmoothingSlider;
+
+    // Credits panel elements
+    private Button closeCreditsButton;
+
+    // Load panel elements
+    private Button closeLoadButton, deleteSelectedButton, loadSelectedButton;
+
+    // Settings panel elements
+    private Button closeSettingsButton, resetSettingsButton, applySettingsButton;
+    private Toggle fullscreenToggle, vsyncToggle;
+
+    // Game settings data
+    private GameSettings gameSettings;
+    private Slider masterVolumeSlider, musicVolumeSlider, sfxVolumeSlider;
+    private Label masterVolumeText, musicVolumeText, sfxVolumeText;
 
     // Main navigation buttons
     private Button newGameButton, continueButton, loadGameButton;
+    private DropdownField qualityDropdown, resolutionDropdown;
+    private ScrollView saveSlots;
+    private VisualElement selectedSaveSlot;
     private Button settingsButton, creditsButton, quitButton;
 
     // Panel containers
     private VisualElement settingsPanel, loadPanel, creditsPanel;
 
-    // Settings panel elements
-    private Button closeSettingsButton, resetSettingsButton, applySettingsButton;
-    private Slider masterVolumeSlider, musicVolumeSlider, sfxVolumeSlider;
-    private Label masterVolumeText, musicVolumeText, sfxVolumeText;
-    private DropdownField qualityDropdown, resolutionDropdown;
-    private Toggle fullscreenToggle, vsyncToggle;
-    private Toggle autosaveToggle, tooltipsToggle, inputHintsToggle;
-    private Slider cameraSmoothingSlider;
-
-    // Load panel elements
-    private Button closeLoadButton, deleteSelectedButton, loadSelectedButton;
-    private ScrollView saveSlots;
-    private VisualElement selectedSaveSlot;
-
-    // Credits panel elements
-    private Button closeCreditsButton;
-
     // Version info
     private Label versionLabel, debugHintLabel;
-
-    // Game settings data
-    private GameSettings gameSettings;
-
-    // Save data
-    private List<SaveData> availableSaves = new List<SaveData>();
-
-    [System.Serializable]
-    public class GameSettings
-    {
-        public float masterVolume = 1f;
-        public float musicVolume = 0.8f;
-        public float sfxVolume = 0.9f;
-        public int qualityLevel = 2;
-        public Resolution resolution;
-        public bool fullscreen = true;
-        public bool vsync = true;
-        public bool autoSave = true;
-        public bool showTooltips = true;
-        public bool showInputHints = true;
-        public float cameraSmoothing = 0.5f;
-    }
-
-    [System.Serializable]
-    public class SaveData
-    {
-        public string fileName;
-        public string displayName;
-        public string lastPlayed;
-        public int dayNumber;
-        public int fishCaught;
-        public int totalValue;
-        public float playtime;
-    }
 
     protected override void BindUIElements()
     {
@@ -243,10 +219,7 @@ public class MainMenuController : UIToolkitPanel
         var resolutions = Screen.resolutions;
         var choices = new List<string>();
 
-        foreach (var res in resolutions)
-        {
-            choices.Add($"{res.width}x{res.height} @ {res.refreshRate}Hz");
-        }
+        foreach (var res in resolutions) choices.Add($"{res.width}x{res.height} @ {res.refreshRate}Hz");
 
         resolutionDropdown.choices = choices;
 
@@ -287,16 +260,15 @@ public class MainMenuController : UIToolkitPanel
     {
         availableSaves.Clear();
 
-        string savePath = Path.Combine(Application.persistentDataPath, saveFileDirectory);
+        var savePath = Path.Combine(Application.persistentDataPath, saveFileDirectory);
         if (!Directory.Exists(savePath))
         {
             Directory.CreateDirectory(savePath);
             return;
         }
 
-        string[] saveFiles = Directory.GetFiles(savePath, "*.save");
-        foreach (string file in saveFiles)
-        {
+        var saveFiles = Directory.GetFiles(savePath, "*.save");
+        foreach (var file in saveFiles)
             try
             {
                 // This is a placeholder - you'd implement actual save file reading
@@ -313,11 +285,10 @@ public class MainMenuController : UIToolkitPanel
 
                 availableSaves.Add(saveData);
             }
-            catch (System.Exception e)
+            catch (Exception e)
             {
                 Debug.LogError($"Failed to load save file {file}: {e.Message}");
             }
-        }
 
         // Sort by last played
         availableSaves.Sort((a, b) => b.lastPlayed.CompareTo(a.lastPlayed));
@@ -327,13 +298,10 @@ public class MainMenuController : UIToolkitPanel
     {
         if (continueButton == null) return;
 
-        bool hasSaves = availableSaves.Count > 0;
+        var hasSaves = availableSaves.Count > 0;
         continueButton.SetEnabled(hasSaves);
 
-        if (!hasSaves)
-        {
-            continueButton.style.opacity = 0.5f;
-        }
+        if (!hasSaves) continueButton.style.opacity = 0.5f;
     }
 
     private void PopulateSaveSlots()
@@ -362,7 +330,8 @@ public class MainMenuController : UIToolkitPanel
         var nameLabel = new Label(save.displayName);
         nameLabel.AddToClassList("save-name");
 
-        var detailsLabel = new Label($"Day {save.dayNumber} | {save.fishCaught} fish | {save.totalValue} coins | {save.lastPlayed}");
+        var detailsLabel =
+            new Label($"Day {save.dayNumber} | {save.fishCaught} fish | {save.totalValue} coins | {save.lastPlayed}");
         detailsLabel.AddToClassList("save-details");
 
         info.Add(nameLabel);
@@ -385,12 +354,8 @@ public class MainMenuController : UIToolkitPanel
     {
         // Remove selection from other slots
         if (saveSlots != null)
-        {
             foreach (var child in saveSlots.Children())
-            {
                 child.RemoveFromClassList("selected");
-            }
-        }
 
         // Select this slot
         slot.AddToClassList("selected");
@@ -459,7 +424,7 @@ public class MainMenuController : UIToolkitPanel
         Application.Quit();
 
 #if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
+        EditorApplication.isPlaying = false;
 #endif
     }
 
@@ -480,7 +445,8 @@ public class MainMenuController : UIToolkitPanel
     {
         // Apply graphics settings
         QualitySettings.SetQualityLevel(gameSettings.qualityLevel);
-        Screen.SetResolution(gameSettings.resolution.width, gameSettings.resolution.height, gameSettings.fullscreen, gameSettings.resolution.refreshRate);
+        Screen.SetResolution(gameSettings.resolution.width, gameSettings.resolution.height, gameSettings.fullscreen,
+            gameSettings.resolution.refreshRate);
         QualitySettings.vSyncCount = gameSettings.vsync ? 1 : 0;
 
         // Save settings
@@ -515,20 +481,18 @@ public class MainMenuController : UIToolkitPanel
     private void OnQualityChanged(ChangeEvent<string> evt)
     {
         var qualityNames = QualitySettings.names;
-        for (int i = 0; i < qualityNames.Length; i++)
-        {
+        for (var i = 0; i < qualityNames.Length; i++)
             if (qualityNames[i] == evt.newValue)
             {
                 gameSettings.qualityLevel = i;
                 break;
             }
-        }
     }
 
     private void OnResolutionChanged(ChangeEvent<string> evt)
     {
         var resolutions = Screen.resolutions;
-        for (int i = 0; i < resolutions.Length; i++)
+        for (var i = 0; i < resolutions.Length; i++)
         {
             var resString = $"{resolutions[i].width}x{resolutions[i].height} @ {resolutions[i].refreshRate}Hz";
             if (resString == evt.newValue)
@@ -584,7 +548,7 @@ public class MainMenuController : UIToolkitPanel
             if (saveData != null)
             {
                 // Delete save file
-                string savePath = Path.Combine(Application.persistentDataPath, saveFileDirectory, saveData.fileName);
+                var savePath = Path.Combine(Application.persistentDataPath, saveFileDirectory, saveData.fileName);
                 if (File.Exists(savePath))
                 {
                     File.Delete(savePath);
@@ -621,5 +585,33 @@ public class MainMenuController : UIToolkitPanel
     {
         if (creditsPanel != null)
             creditsPanel.style.display = DisplayStyle.None;
+    }
+
+    [Serializable]
+    public class GameSettings
+    {
+        public float masterVolume = 1f;
+        public float musicVolume = 0.8f;
+        public float sfxVolume = 0.9f;
+        public int qualityLevel = 2;
+        public bool fullscreen = true;
+        public bool vsync = true;
+        public bool autoSave = true;
+        public bool showTooltips = true;
+        public bool showInputHints = true;
+        public float cameraSmoothing = 0.5f;
+        public Resolution resolution;
+    }
+
+    [Serializable]
+    public class SaveData
+    {
+        public string fileName;
+        public string displayName;
+        public string lastPlayed;
+        public int dayNumber;
+        public int fishCaught;
+        public int totalValue;
+        public float playtime;
     }
 }

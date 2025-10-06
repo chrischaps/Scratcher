@@ -1,55 +1,90 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
-using System.Collections;
 
 public class GameHUDController : UIToolkitPanel
 {
-    [Header("HUD Settings")]
-    [SerializeField] private bool showInputHints = true;
+    // Notification system
+    public enum NotificationType
+    {
+        Info,
+        Success,
+        Warning,
+        Error
+    }
+
+    [Header("HUD Settings")] [SerializeField]
+    private bool showInputHints = true;
+
     [SerializeField] private float notificationDuration = 3f;
     [SerializeField] private int maxNotifications = 5;
+    private readonly List<VisualElement> activeNotifications = new();
+    private string currentLocation = "Fishing Pond";
+    private TimeOfDay currentTimeOfDay = TimeOfDay.Morning;
 
     // Top bar elements
     private Label dayLabel, timeLabel, timeOfDayLabel;
-    private Label weatherLabel;
-    private VisualElement weatherIcon;
     private ProgressBar energyBar;
     private Label energyText;
 
     // Bottom bar elements
     private Label fishCount, moneyAmount;
-    private Label locationName, interactionHint;
-
-    // Notification system
-    private VisualElement notificationArea;
-    private List<VisualElement> activeNotifications = new List<VisualElement>();
+    private FishingController fishingController;
+    private Label fishingInstruction;
 
     // Fishing overlay
     private VisualElement fishingOverlay;
     private VisualElement fishingPanel;
-    private Label fishingStatus;
     private ProgressBar fishingProgress;
-    private Label fishingInstruction;
+    private Label fishingStatus;
+
+    // Input hints
+    private VisualElement inputHints;
+    private InventorySystem inventorySystem;
+
+    // State tracking
+    private Label locationName, interactionHint;
 
     // Mini inventory
     private VisualElement miniInventory;
     private VisualElement miniInventoryGrid;
-    private Button openInventoryButton;
 
-    // Input hints
-    private VisualElement inputHints;
+    // Notification system
+    private VisualElement notificationArea;
+    private Button openInventoryButton;
+    private IsometricPlayerController playerController;
 
     // Game system references
     private GameTimeManager timeManager;
-    private InventorySystem inventorySystem;
-    private FishingController fishingController;
-    private IsometricPlayerController playerController;
+    private VisualElement weatherIcon;
+    private Label weatherLabel;
 
-    // State tracking
-    private bool isFishingUIVisible = false;
-    private TimeOfDay currentTimeOfDay = TimeOfDay.Morning;
-    private string currentLocation = "Fishing Pond";
+    public bool IsFishingUIVisible { get; private set; }
+
+    private void Update()
+    {
+        UpdateTimeDisplay();
+        UpdatePlayerStats();
+        UpdateInventoryDisplay();
+        UpdateLocationInfo();
+    }
+
+    private void OnDestroy()
+    {
+        // Unsubscribe from events
+        if (timeManager != null)
+        {
+            timeManager.OnTimeOfDayChanged -= OnTimeOfDayChanged;
+            timeManager.OnDayChanged -= OnDayChanged;
+        }
+
+        if (inventorySystem != null)
+        {
+            inventorySystem.OnFishAdded -= OnFishCaught;
+            inventorySystem.OnValueChanged -= OnInventoryValueChanged;
+        }
+    }
 
     protected override void BindUIElements()
     {
@@ -138,14 +173,6 @@ public class GameHUDController : UIToolkitPanel
         // fishingController.OnNearWaterChanged += OnNearWaterChanged;
     }
 
-    private void Update()
-    {
-        UpdateTimeDisplay();
-        UpdatePlayerStats();
-        UpdateInventoryDisplay();
-        UpdateLocationInfo();
-    }
-
     private void UpdateTimeDisplay()
     {
         if (timeManager == null) return;
@@ -165,7 +192,7 @@ public class GameHUDController : UIToolkitPanel
         // Energy bar (placeholder - would need player energy system)
         if (energyBar != null)
         {
-            float energy = 100f; // Placeholder
+            var energy = 100f; // Placeholder
             energyBar.value = energy;
 
             if (energyText != null)
@@ -195,9 +222,9 @@ public class GameHUDController : UIToolkitPanel
 
         // Add recent catches (limit to 6 items)
         var recentFish = inventorySystem.GetCaughtFish();
-        int displayCount = Mathf.Min(recentFish.Count, 6);
+        var displayCount = Mathf.Min(recentFish.Count, 6);
 
-        for (int i = recentFish.Count - displayCount; i < recentFish.Count; i++)
+        for (var i = recentFish.Count - displayCount; i < recentFish.Count; i++)
         {
             var fish = recentFish[i];
             var fishItem = CreateMiniInventoryItem(fish);
@@ -212,9 +239,7 @@ public class GameHUDController : UIToolkitPanel
 
         // Add fish sprite if available
         if (fish.fishData.fishSprite != null)
-        {
             item.style.backgroundImage = new StyleBackground(fish.fishData.fishSprite);
-        }
 
         // Add tooltip functionality
         item.tooltip = $"{fish.fishData.fishName}\n{fish.weight:F1}kg - {fish.value} coins";
@@ -228,8 +253,8 @@ public class GameHUDController : UIToolkitPanel
         if (fishingController != null)
         {
             // This would need public properties in FishingController
-            bool nearWater = false; // fishingController.IsNearWater;
-            bool isFishing = false; // fishingController.IsFishing;
+            var nearWater = false; // fishingController.IsNearWater;
+            var isFishing = false; // fishingController.IsFishing;
 
             if (interactionHint != null)
             {
@@ -266,7 +291,7 @@ public class GameHUDController : UIToolkitPanel
 
     private void OnDayChanged(int newDay)
     {
-        ShowNotification("New Day", $"Day {newDay} has begun!", NotificationType.Info);
+        ShowNotification("New Day", $"Day {newDay} has begun!");
     }
 
     private void OnFishCaught(CaughtFish fish)
@@ -285,23 +310,19 @@ public class GameHUDController : UIToolkitPanel
     {
         Debug.Log("OnOpenInventory");
         // This would open the full inventory UI
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.TogglePanel("InventoryPanel");
-        }
+        if (UIManager.Instance != null) UIManager.Instance.TogglePanel("InventoryPanel");
     }
 
     private void UpdateWeatherDisplay()
     {
         // Placeholder weather system
-        string weather = "Sunny";
+        var weather = "Sunny";
 
         if (weatherLabel != null)
             weatherLabel.text = weather;
 
         // Update weather icon color based on weather
         if (weatherIcon != null)
-        {
             switch (weather)
             {
                 case "Sunny":
@@ -317,7 +338,6 @@ public class GameHUDController : UIToolkitPanel
                     weatherIcon.style.backgroundColor = new Color(1f, 0.8f, 0.4f, 0.8f);
                     break;
             }
-        }
     }
 
     // Fishing UI methods
@@ -326,7 +346,7 @@ public class GameHUDController : UIToolkitPanel
         if (fishingOverlay != null)
         {
             fishingOverlay.style.display = DisplayStyle.Flex;
-            isFishingUIVisible = true;
+            IsFishingUIVisible = true;
         }
     }
 
@@ -335,7 +355,7 @@ public class GameHUDController : UIToolkitPanel
         if (fishingOverlay != null)
         {
             fishingOverlay.style.display = DisplayStyle.None;
-            isFishingUIVisible = false;
+            IsFishingUIVisible = false;
         }
     }
 
@@ -355,15 +375,6 @@ public class GameHUDController : UIToolkitPanel
     {
         if (fishingInstruction != null)
             fishingInstruction.text = instruction;
-    }
-
-    // Notification system
-    public enum NotificationType
-    {
-        Info,
-        Success,
-        Warning,
-        Error
     }
 
     public void ShowNotification(string title, string message, NotificationType type = NotificationType.Info)
@@ -483,23 +494,5 @@ public class GameHUDController : UIToolkitPanel
     {
         showInputHints = visible;
         UpdateInputHints();
-    }
-
-    public bool IsFishingUIVisible => isFishingUIVisible;
-
-    private void OnDestroy()
-    {
-        // Unsubscribe from events
-        if (timeManager != null)
-        {
-            timeManager.OnTimeOfDayChanged -= OnTimeOfDayChanged;
-            timeManager.OnDayChanged -= OnDayChanged;
-        }
-
-        if (inventorySystem != null)
-        {
-            inventorySystem.OnFishAdded -= OnFishCaught;
-            inventorySystem.OnValueChanged -= OnInventoryValueChanged;
-        }
     }
 }

@@ -1,43 +1,44 @@
+using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public enum GridType
 {
     Isometric,
     Rectangular
 }
 
-[System.Serializable]
+[Serializable]
 public class GridConfiguration
 {
-    [Header("Grid Type")]
-    public GridType gridType = GridType.Isometric;
+    [Header("Grid Type")] public GridType gridType = GridType.Isometric;
 
-    [Header("Cell Settings")]
-    public Vector3 cellSize = new Vector3(1f, 1f, 0f);
+    [Header("Cell Settings")] public Vector3 cellSize = new(1f, 1f, 0f);
+
     public Vector3 cellGap = Vector3.zero;
 
-    [Header("Movement Settings")]
-    public bool useGridBasedMovement = false;
+    [Header("Movement Settings")] public bool useGridBasedMovement;
+
     public float movementSpeed = 5f;
 
-    [Header("Camera Settings")]
-    public Vector3 cameraOffset = new Vector3(0, 0, -10);
-    public bool useCustomCameraAngles = false;
+    [Header("Camera Settings")] public Vector3 cameraOffset = new(0, 0, -10);
 
-    [Header("Custom Camera Angles")]
-    [Range(0f, 90f)] public float topDownAngle = 60f;
-    [Range(0f, 360f)] public float topDownYRotation = 0f;
-    [Range(-45f, 45f)] public float topDownZRotation = 0f;
+    public bool useCustomCameraAngles;
 
-    public Grid.CellLayout GetCellLayout()
+    [Header("Custom Camera Angles")] [Range(0f, 90f)]
+    public float topDownAngle = 60f;
+
+    [Range(0f, 360f)] public float topDownYRotation;
+    [Range(-45f, 45f)] public float topDownZRotation;
+
+    public GridLayout.CellLayout GetCellLayout()
     {
-        return gridType == GridType.Isometric ? Grid.CellLayout.Isometric : Grid.CellLayout.Rectangle;
+        return gridType == GridType.Isometric ? GridLayout.CellLayout.Isometric : GridLayout.CellLayout.Rectangle;
     }
 
-    public Grid.CellSwizzle GetCellSwizzle()
+    public GridLayout.CellSwizzle GetCellSwizzle()
     {
-        return Grid.CellSwizzle.XYZ;
+        return GridLayout.CellSwizzle.XYZ;
     }
 
     public Vector2 ConvertInputToMovement(Vector2 input)

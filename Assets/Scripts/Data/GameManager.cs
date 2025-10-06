@@ -2,14 +2,15 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    [Header("Game References")]
-    [SerializeField] private FishDatabase fishDatabase;
+    [Header("Game References")] [SerializeField]
+    private FishDatabase fishDatabase;
+
     [SerializeField] private GameTimeManager timeManager;
     [SerializeField] private InventorySystem inventorySystem;
     [SerializeField] private FishingGameUI gameUI;
 
-    [Header("Player")]
-    [SerializeField] private IsometricPlayerController player;
+    [Header("Player")] [SerializeField] private IsometricPlayerController player;
+
     [SerializeField] private Transform playerSpawnPoint;
 
     public static GameManager Instance { get; private set; }
@@ -24,13 +25,17 @@ public class GameManager : MonoBehaviour
         else
         {
             Destroy(gameObject);
-            return;
         }
     }
 
     private void Start()
     {
         InitializeGame();
+    }
+
+    private void OnApplicationPause(bool pauseStatus)
+    {
+        PauseGame(pauseStatus);
     }
 
     private void InitializeGame()
@@ -52,10 +57,7 @@ public class GameManager : MonoBehaviour
             player = FindObjectOfType<IsometricPlayerController>();
 
         // Spawn player if needed
-        if (player != null && playerSpawnPoint != null)
-        {
-            player.transform.position = playerSpawnPoint.position;
-        }
+        if (player != null && playerSpawnPoint != null) player.transform.position = playerSpawnPoint.position;
 
         Debug.Log("Fishing Game Initialized!");
         Debug.Log("Controls:");
@@ -79,10 +81,5 @@ public class GameManager : MonoBehaviour
     public void QuitGame()
     {
         Application.Quit();
-    }
-
-    private void OnApplicationPause(bool pauseStatus)
-    {
-        PauseGame(pauseStatus);
     }
 }

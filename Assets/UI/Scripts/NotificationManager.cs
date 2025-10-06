@@ -1,28 +1,10 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
-using System.Collections.Generic;
-using System.Collections;
 
 public class NotificationManager : MonoBehaviour
 {
-    [Header("Notification Settings")]
-    [SerializeField] private float defaultDuration = 3f;
-    [SerializeField] private int maxNotifications = 5;
-    [SerializeField] private bool enableSounds = true;
-
-    [Header("Audio")]
-    [SerializeField] private AudioClip notificationSound;
-    [SerializeField] private AudioClip successSound;
-    [SerializeField] private AudioClip warningSound;
-    [SerializeField] private AudioClip errorSound;
-
-    private UIDocument uiDocument;
-    private VisualElement notificationArea;
-    private List<NotificationElement> activeNotifications = new List<NotificationElement>();
-    private AudioSource audioSource;
-
-    public static NotificationManager Instance { get; private set; }
-
     public enum NotificationType
     {
         Info,
@@ -31,21 +13,24 @@ public class NotificationManager : MonoBehaviour
         Error
     }
 
-    private class NotificationElement
-    {
-        public VisualElement element;
-        public float timeRemaining;
-        public NotificationType type;
-        public bool isRemoving;
+    [Header("Notification Settings")] [SerializeField]
+    private float defaultDuration = 3f;
 
-        public NotificationElement(VisualElement element, float duration, NotificationType type)
-        {
-            this.element = element;
-            this.timeRemaining = duration;
-            this.type = type;
-            this.isRemoving = false;
-        }
-    }
+    [SerializeField] private int maxNotifications = 5;
+    [SerializeField] private bool enableSounds = true;
+
+    [Header("Audio")] [SerializeField] private AudioClip notificationSound;
+
+    [SerializeField] private AudioClip successSound;
+    [SerializeField] private AudioClip warningSound;
+    [SerializeField] private AudioClip errorSound;
+    private readonly List<NotificationElement> activeNotifications = new();
+    private AudioSource audioSource;
+    private VisualElement notificationArea;
+
+    private UIDocument uiDocument;
+
+    public static NotificationManager Instance { get; private set; }
 
     private void Awake()
     {
@@ -61,24 +46,28 @@ public class NotificationManager : MonoBehaviour
         }
     }
 
+    private void Update()
+    {
+        UpdateNotifications();
+    }
+
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
     private void InitializeNotificationManager()
     {
         // Get or create UIDocument
         uiDocument = GetComponent<UIDocument>();
-        if (uiDocument == null)
-        {
-            uiDocument = gameObject.AddComponent<UIDocument>();
-        }
+        if (uiDocument == null) uiDocument = gameObject.AddComponent<UIDocument>();
 
         // Create notification area if it doesn't exist
         if (uiDocument.rootVisualElement != null)
         {
             notificationArea = uiDocument.rootVisualElement.Q<VisualElement>("notification-area");
 
-            if (notificationArea == null)
-            {
-                CreateNotificationArea();
-            }
+            if (notificationArea == null) CreateNotificationArea();
         }
 
         // Setup audio source
@@ -110,14 +99,9 @@ public class NotificationManager : MonoBehaviour
         uiDocument.rootVisualElement.Add(notificationArea);
     }
 
-    private void Update()
-    {
-        UpdateNotifications();
-    }
-
     private void UpdateNotifications()
     {
-        for (int i = activeNotifications.Count - 1; i >= 0; i--)
+        for (var i = activeNotifications.Count - 1; i >= 0; i--)
         {
             var notification = activeNotifications[i];
 
@@ -125,15 +109,13 @@ public class NotificationManager : MonoBehaviour
             {
                 notification.timeRemaining -= Time.unscaledDeltaTime;
 
-                if (notification.timeRemaining <= 0)
-                {
-                    StartCoroutine(RemoveNotification(notification));
-                }
+                if (notification.timeRemaining <= 0) StartCoroutine(RemoveNotification(notification));
             }
         }
     }
 
-    public void ShowNotification(string title, string message, NotificationType type = NotificationType.Info, float duration = -1)
+    public void ShowNotification(string title, string message, NotificationType type = NotificationType.Info,
+        float duration = -1)
     {
         if (notificationArea == null)
         {
@@ -149,13 +131,9 @@ public class NotificationManager : MonoBehaviour
         {
             var oldest = activeNotifications[0];
             if (!oldest.isRemoving)
-            {
                 StartCoroutine(RemoveNotification(oldest));
-            }
             else
-            {
                 break; // Wait for removal to complete
-            }
         }
 
         // Create notification element
@@ -175,49 +153,45 @@ public class NotificationManager : MonoBehaviour
 
     public void ShowFishCaughtNotification(string fishName, float weight, int value)
     {
-        string title = "Fish Caught!";
-        string message = $"{fishName} ({weight:F1}kg) - {value} coins";
+        var title = "Fish Caught!";
+        var message = $"{fishName} ({weight:F1}kg) - {value} coins";
         ShowNotification(title, message, NotificationType.Success);
     }
 
     public void ShowLevelUpNotification(string skill, int level)
     {
-        string title = "Level Up!";
-        string message = $"{skill} is now level {level}";
+        var title = "Level Up!";
+        var message = $"{skill} is now level {level}";
         ShowNotification(title, message, NotificationType.Success, 4f);
     }
 
     public void ShowInventoryFullNotification()
     {
-        string title = "Inventory Full";
-        string message = "Your inventory is full. Sell some fish to make space.";
+        var title = "Inventory Full";
+        var message = "Your inventory is full. Sell some fish to make space.";
         ShowNotification(title, message, NotificationType.Warning);
     }
 
     public void ShowQuestCompletedNotification(string questName, int reward)
     {
-        string title = "Quest Complete!";
-        string message = $"{questName} - Earned {reward} coins";
+        var title = "Quest Complete!";
+        var message = $"{questName} - Earned {reward} coins";
         ShowNotification(title, message, NotificationType.Success, 4f);
     }
 
     public void ShowTimeOfDayNotification(string timeOfDay)
     {
-        string title = "Time Change";
-        string message = $"It is now {timeOfDay}";
+        var title = "Time Change";
+        var message = $"It is now {timeOfDay}";
         ShowNotification(title, message, NotificationType.Info, 2f);
     }
 
     public void ShowSaveGameNotification(bool success)
     {
         if (success)
-        {
             ShowNotification("Game Saved", "Your progress has been saved.", NotificationType.Success, 2f);
-        }
         else
-        {
             ShowNotification("Save Failed", "Failed to save your progress.", NotificationType.Error);
-        }
     }
 
     private VisualElement CreateNotificationElement(string title, string message, NotificationType type)
@@ -338,7 +312,7 @@ public class NotificationManager : MonoBehaviour
     {
         if (!enableSounds || audioSource == null) return;
 
-        AudioClip soundToPlay = notificationSound;
+        var soundToPlay = notificationSound;
 
         switch (type)
         {
@@ -353,24 +327,21 @@ public class NotificationManager : MonoBehaviour
                 break;
         }
 
-        if (soundToPlay != null)
-        {
-            audioSource.PlayOneShot(soundToPlay);
-        }
+        if (soundToPlay != null) audioSource.PlayOneShot(soundToPlay);
     }
 
     private IEnumerator AnimateNotificationIn(VisualElement notification)
     {
-        float duration = 0.3f;
-        float elapsed = 0f;
+        var duration = 0.3f;
+        var elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = elapsed / duration;
+            var t = elapsed / duration;
 
             // Ease out animation
-            float easedT = 1f - (1f - t) * (1f - t);
+            var easedT = 1f - (1f - t) * (1f - t);
 
             notification.style.opacity = easedT;
             notification.style.translate = new Translate(new Length(100 * (1f - easedT), LengthUnit.Percent), 0);
@@ -385,16 +356,16 @@ public class NotificationManager : MonoBehaviour
 
     private IEnumerator AnimateNotificationOut(VisualElement notification)
     {
-        float duration = 0.3f;
-        float elapsed = 0f;
+        var duration = 0.3f;
+        var elapsed = 0f;
 
         while (elapsed < duration)
         {
             elapsed += Time.unscaledDeltaTime;
-            float t = elapsed / duration;
+            var t = elapsed / duration;
 
             // Ease in animation
-            float easedT = t * t;
+            var easedT = t * t;
 
             notification.style.opacity = 1f - easedT;
             notification.style.translate = new Translate(new Length(100 * easedT, LengthUnit.Percent), 0);
@@ -403,10 +374,7 @@ public class NotificationManager : MonoBehaviour
         }
 
         // Remove from DOM
-        if (notification.parent != null)
-        {
-            notification.parent.Remove(notification);
-        }
+        if (notification.parent != null) notification.parent.Remove(notification);
     }
 
     private IEnumerator RemoveNotification(NotificationElement notification)
@@ -425,12 +393,8 @@ public class NotificationManager : MonoBehaviour
     public void ClearAllNotifications()
     {
         foreach (var notification in activeNotifications)
-        {
             if (!notification.isRemoving)
-            {
                 StartCoroutine(RemoveNotification(notification));
-            }
-        }
     }
 
     public void SetSoundsEnabled(bool enabled)
@@ -448,11 +412,19 @@ public class NotificationManager : MonoBehaviour
         defaultDuration = Mathf.Max(0.5f, duration);
     }
 
-    private void OnDestroy()
+    private class NotificationElement
     {
-        if (Instance == this)
+        public readonly VisualElement element;
+        public bool isRemoving;
+        public float timeRemaining;
+        public NotificationType type;
+
+        public NotificationElement(VisualElement element, float duration, NotificationType type)
         {
-            Instance = null;
+            this.element = element;
+            timeRemaining = duration;
+            this.type = type;
+            isRemoving = false;
         }
     }
 }

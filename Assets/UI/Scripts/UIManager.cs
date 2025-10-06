@@ -1,23 +1,24 @@
-using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class UIManager : MonoBehaviour
 {
-    [Header("UI Documents")]
-    [SerializeField] private List<UIDocument> uiDocuments = new List<UIDocument>();
+    [Header("UI Documents")] [SerializeField]
+    private List<UIDocument> uiDocuments = new();
 
-    [Header("Panel Management")]
-    [SerializeField] private List<UIToolkitPanel> managedPanels = new List<UIToolkitPanel>();
+    [Header("Panel Management")] [SerializeField]
+    private List<UIToolkitPanel> managedPanels = new();
 
-    [Header("Debug Settings")]
-    [SerializeField] private KeyCode debugToggleKey = KeyCode.F1;
+    [Header("Debug Settings")] [SerializeField]
+    private KeyCode debugToggleKey = KeyCode.F1;
+
     [SerializeField] private bool enableDebugUI = true;
 
-    private Dictionary<string, UIToolkitPanel> panelRegistry = new Dictionary<string, UIToolkitPanel>();
-    private Stack<UIToolkitPanel> panelStack = new Stack<UIToolkitPanel>();
+    private readonly Dictionary<string, UIToolkitPanel> panelRegistry = new();
+    private readonly Stack<UIToolkitPanel> panelStack = new();
 
     public static UIManager Instance { get; private set; }
 
@@ -35,49 +36,39 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    private void InitializeUIManager()
-    {
-        // Find all UI documents in the scene if not assigned
-        if (uiDocuments.Count == 0)
-        {
-            uiDocuments.AddRange(FindObjectsOfType<UIDocument>());
-        }
-
-        // Find all UI panels if not assigned
-        if (managedPanels.Count == 0)
-        {
-            managedPanels.AddRange(FindObjectsOfType<UIToolkitPanel>());
-        }
-
-        // Register panels
-        foreach (var panel in managedPanels)
-        {
-            RegisterPanel(panel);
-        }
-
-        Debug.Log($"UIManager initialized with {uiDocuments.Count} documents and {managedPanels.Count} panels");
-    }
-
     private void Update()
     {
         HandleDebugInput();
     }
 
+    private void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    private void InitializeUIManager()
+    {
+        // Find all UI documents in the scene if not assigned
+        if (uiDocuments.Count == 0) uiDocuments.AddRange(FindObjectsOfType<UIDocument>());
+
+        // Find all UI panels if not assigned
+        if (managedPanels.Count == 0) managedPanels.AddRange(FindObjectsOfType<UIToolkitPanel>());
+
+        // Register panels
+        foreach (var panel in managedPanels) RegisterPanel(panel);
+
+        Debug.Log($"UIManager initialized with {uiDocuments.Count} documents and {managedPanels.Count} panels");
+    }
+
     private void HandleDebugInput()
     {
-        Keyboard keyboard = Keyboard.current;
+        var keyboard = Keyboard.current;
         if (keyboard != null)
         {
-            if (enableDebugUI && keyboard[ConvertKeyCodeToKey(debugToggleKey)].wasPressedThisFrame)
-            {
-                ToggleDebugUI();
-            }
+            if (enableDebugUI && keyboard[ConvertKeyCodeToKey(debugToggleKey)].wasPressedThisFrame) ToggleDebugUI();
 
             // ESC key to close top panel
-            if (keyboard[Key.Escape].wasPressedThisFrame)
-            {
-                CloseTopPanel();
-            }
+            if (keyboard[Key.Escape].wasPressedThisFrame) CloseTopPanel();
         }
     }
 
@@ -118,11 +109,8 @@ public class UIManager : MonoBehaviour
     {
         if (panel == null) return;
 
-        string panelId = panel.name;
-        if (panelRegistry.ContainsKey(panelId))
-        {
-            Debug.LogWarning($"Panel {panelId} already registered, overwriting");
-        }
+        var panelId = panel.name;
+        if (panelRegistry.ContainsKey(panelId)) Debug.LogWarning($"Panel {panelId} already registered, overwriting");
 
         panelRegistry[panelId] = panel;
         Debug.Log($"Registered UI panel: {panelId}");
@@ -132,7 +120,7 @@ public class UIManager : MonoBehaviour
     {
         if (panel == null) return;
 
-        string panelId = panel.name;
+        var panelId = panel.name;
         if (panelRegistry.ContainsKey(panelId))
         {
             panelRegistry.Remove(panelId);
@@ -142,23 +130,17 @@ public class UIManager : MonoBehaviour
 
     public T GetPanel<T>(string panelId) where T : UIToolkitPanel
     {
-        if (panelRegistry.TryGetValue(panelId, out UIToolkitPanel panel))
-        {
-            return panel as T;
-        }
+        if (panelRegistry.TryGetValue(panelId, out var panel)) return panel as T;
         return null;
     }
 
     public void ShowPanel(string panelId, bool addToStack = true)
     {
-        if (panelRegistry.TryGetValue(panelId, out UIToolkitPanel panel))
+        if (panelRegistry.TryGetValue(panelId, out var panel))
         {
             panel.ShowPanel();
 
-            if (addToStack && !panelStack.Contains(panel))
-            {
-                panelStack.Push(panel);
-            }
+            if (addToStack && !panelStack.Contains(panel)) panelStack.Push(panel);
         }
         else
         {
@@ -168,7 +150,7 @@ public class UIManager : MonoBehaviour
 
     public void HidePanel(string panelId, bool removeFromStack = true)
     {
-        if (panelRegistry.TryGetValue(panelId, out UIToolkitPanel panel))
+        if (panelRegistry.TryGetValue(panelId, out var panel))
         {
             panel.HidePanel();
 
@@ -181,17 +163,15 @@ public class UIManager : MonoBehaviour
                     if (p != panel)
                         tempStack.Push(p);
                 }
-                while (tempStack.Count > 0)
-                {
-                    panelStack.Push(tempStack.Pop());
-                }
+
+                while (tempStack.Count > 0) panelStack.Push(tempStack.Pop());
             }
         }
     }
 
     public void TogglePanel(string panelId)
     {
-        if (panelRegistry.TryGetValue(panelId, out UIToolkitPanel panel))
+        if (panelRegistry.TryGetValue(panelId, out var panel))
         {
             if (panel.IsVisible)
                 HidePanel(panelId);
@@ -211,10 +191,7 @@ public class UIManager : MonoBehaviour
 
     public void CloseAllPanels()
     {
-        foreach (var panel in panelRegistry.Values)
-        {
-            panel.HidePanel();
-        }
+        foreach (var panel in panelRegistry.Values) panel.HidePanel();
         panelStack.Clear();
     }
 
@@ -233,16 +210,12 @@ public class UIManager : MonoBehaviour
     {
         var themeAsset = Resources.Load<ThemeStyleSheet>(themePath);
         if (themeAsset != null)
-        {
             foreach (var doc in uiDocuments)
-            {
                 if (doc.rootVisualElement != null)
                 {
                     // Apply theme to all documents
                     // Note: Implementation depends on how themes are structured
                 }
-            }
-        }
     }
 
     public List<string> GetRegisteredPanels()
@@ -253,13 +226,5 @@ public class UIManager : MonoBehaviour
     public int GetActivePanelCount()
     {
         return panelRegistry.Values.Count(p => p.IsVisible);
-    }
-
-    private void OnDestroy()
-    {
-        if (Instance == this)
-        {
-            Instance = null;
-        }
     }
 }

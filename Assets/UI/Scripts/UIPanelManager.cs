@@ -4,7 +4,10 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-public class UIManager : MonoBehaviour
+/// <summary>
+/// Manages UI Toolkit panel lifecycle, registration, and input handling
+/// </summary>
+public class UIPanelManager : MonoBehaviour
 {
     [Header("UI Documents")] [SerializeField]
     private List<UIDocument> uiDocuments = new();
@@ -18,9 +21,10 @@ public class UIManager : MonoBehaviour
     [SerializeField] private bool enableDebugUI = true;
 
     private readonly Dictionary<string, UIToolkitPanel> panelRegistry = new();
+    private readonly Dictionary<System.Type, UIToolkitPanel> panelTypeRegistry = new();
     private readonly Stack<UIToolkitPanel> panelStack = new();
 
-    public static UIManager Instance { get; private set; }
+    public static UIPanelManager Instance { get; private set; }
 
     private void Awake()
     {
@@ -57,7 +61,7 @@ public class UIManager : MonoBehaviour
         // Register panels
         foreach (var panel in managedPanels) RegisterPanel(panel);
 
-        Debug.Log($"UIManager initialized with {uiDocuments.Count} documents and {managedPanels.Count} panels");
+        Debug.Log($"UIPanelManager initialized with {uiDocuments.Count} documents and {managedPanels.Count} panels");
     }
 
     private void HandleDebugInput()
@@ -109,28 +113,46 @@ public class UIManager : MonoBehaviour
     {
         if (panel == null) return;
 
-        var panelId = panel.name;
+        // Register by name
+        var panelId = panel.PanelName;
         if (panelRegistry.ContainsKey(panelId)) Debug.LogWarning($"Panel {panelId} already registered, overwriting");
-
         panelRegistry[panelId] = panel;
-        Debug.Log($"Registered UI panel: {panelId}");
+
+        // Register by type
+        var panelType = panel.GetType();
+        if (panelTypeRegistry.ContainsKey(panelType)) Debug.LogWarning($"Panel type {panelType.Name} already registered, overwriting");
+        panelTypeRegistry[panelType] = panel;
+
+        Debug.Log($"Registered UI panel: {panelId} (Type: {panelType.Name})");
     }
 
     public void UnregisterPanel(UIToolkitPanel panel)
     {
         if (panel == null) return;
 
-        var panelId = panel.name;
+        var panelId = panel.PanelName;
         if (panelRegistry.ContainsKey(panelId))
         {
             panelRegistry.Remove(panelId);
             Debug.Log($"Unregistered UI panel: {panelId}");
+        }
+
+        var panelType = panel.GetType();
+        if (panelTypeRegistry.ContainsKey(panelType))
+        {
+            panelTypeRegistry.Remove(panelType);
         }
     }
 
     public T GetPanel<T>(string panelId) where T : UIToolkitPanel
     {
         if (panelRegistry.TryGetValue(panelId, out var panel)) return panel as T;
+        return null;
+    }
+
+    public T GetPanel<T>() where T : UIToolkitPanel
+    {
+        if (panelTypeRegistry.TryGetValue(typeof(T), out var panel)) return panel as T;
         return null;
     }
 
@@ -180,6 +202,55 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void ShowPanel<T>(bool addToStack = true) where T : UIToolkitPanel
+    {
+        var panel = GetPanel<T>();
+        if (panel != null)
+        {
+            panel.ShowPanel();
+            if (addToStack && !panelStack.Contains(panel)) panelStack.Push(panel);
+        }
+        else
+        {
+            Debug.LogWarning($"Panel of type {typeof(T).Name} not found in registry");
+        }
+    }
+
+    public void HidePanel<T>(bool removeFromStack = true) where T : UIToolkitPanel
+    {
+        var panel = GetPanel<T>();
+        if (panel != null)
+        {
+            panel.HidePanel();
+            if (removeFromStack && panelStack.Contains(panel))
+            {
+                var tempStack = new Stack<UIToolkitPanel>();
+                while (panelStack.Count > 0)
+                {
+                    var p = panelStack.Pop();
+                    if (p != panel) tempStack.Push(p);
+                }
+                while (tempStack.Count > 0) panelStack.Push(tempStack.Pop());
+            }
+        }
+    }
+
+    public void TogglePanel<T>() where T : UIToolkitPanel
+    {
+        var panel = GetPanel<T>();
+        if (panel != null)
+        {
+            if (panel.IsVisible)
+                HidePanel<T>();
+            else
+                ShowPanel<T>();
+        }
+        else
+        {
+            Debug.LogWarning($"Panel of type {typeof(T).Name} not found in registry");
+        }
+    }
+
     public void CloseTopPanel()
     {
         if (panelStack.Count > 0)
@@ -197,7 +268,7 @@ public class UIManager : MonoBehaviour
 
     private void ToggleDebugUI()
     {
-        TogglePanel("DebugPanel");
+        TogglePanel<DebugUIManager>();
     }
 
     public void EnableDebugMode(bool enable)

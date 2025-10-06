@@ -4079,9 +4079,9 @@ PrefabInstance:
       value: UI System
       objectReference: {fileID: 0}
     - target: {fileID: 8114534661144797495, guid: 04f0b5c4f289cde4da732416108ee634, type: 3}
-      propertyPath: m_PanelSettings
-      value: 
-      objectReference: {fileID: 11400000, guid: 72f5dcae3ebaca248b16b05a4c69d8db, type: 2}
+      propertyPath: m_SortingOrder
+      value: 100
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

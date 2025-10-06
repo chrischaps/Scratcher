@@ -12,7 +12,10 @@ public class DebugUIManager : UIToolkitPanel
     [SerializeField] private float updateInterval = 0.1f;
     private Button addRandomFishButton, addRareFishButton, fillInventoryButton;
     private Button closeButton;
+    private VisualElement debugPanel;
     private VisualElement currentActiveTab;
+
+    public new bool IsVisible => debugPanel != null && debugPanel.style.display == DisplayStyle.Flex;
     private Label drawCallsValue, trianglesValue, verticesValue;
     private Label fishCount, totalValue;
     private FishDatabase fishDatabase;
@@ -76,6 +79,9 @@ public class DebugUIManager : UIToolkitPanel
         // Initialize collections
         tabs = new Dictionary<string, VisualElement>();
         tabButtons = new Dictionary<string, Button>();
+
+        // Bind the main debug panel container
+        debugPanel = GetElement<VisualElement>("debug-panel");
 
         // Bind header elements
         closeButton = GetElement<Button>("close-button");
@@ -282,7 +288,7 @@ public class DebugUIManager : UIToolkitPanel
         if (timeManager != null)
         {
             var currentTime = timeManager.GetCurrentTime();
-            if (timeSlider != null && !timeSlider.focusController.focusedElement.Equals(timeSlider))
+            if (timeSlider != null && timeSlider.focusController?.focusedElement != timeSlider)
                 timeSlider.SetValueWithoutNotify(currentTime);
 
             if (timeDisplay != null)
@@ -510,12 +516,20 @@ public class DebugUIManager : UIToolkitPanel
     public override void ShowPanel()
     {
         base.ShowPanel();
-        if (root != null) root.style.display = DisplayStyle.Flex;
+        if (debugPanel != null) debugPanel.style.display = DisplayStyle.Flex;
     }
 
     public override void HidePanel()
     {
         base.HidePanel();
-        if (root != null) root.style.display = DisplayStyle.None;
+        if (debugPanel != null) debugPanel.style.display = DisplayStyle.None;
+    }
+
+    public override void TogglePanel()
+    {
+        if (IsVisible)
+            HidePanel();
+        else
+            ShowPanel();
     }
 }

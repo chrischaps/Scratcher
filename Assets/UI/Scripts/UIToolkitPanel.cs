@@ -13,6 +13,7 @@ public abstract class UIToolkitPanel : MonoBehaviour
 
     public bool IsVisible => root != null && root.style.display == DisplayStyle.Flex;
     public bool IsInitialized => isInitialized;
+    public string PanelName => string.IsNullOrEmpty(panelName) ? name : panelName;
 
     protected virtual void Awake()
     {

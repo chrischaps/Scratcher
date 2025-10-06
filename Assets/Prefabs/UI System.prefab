@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 0}
+  m_PanelSettings: {fileID: 11400000, guid: 72f5dcae3ebaca248b16b05a4c69d8db, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 28e6d3d52933713408dcf3eed9e99a54, type: 3}
   m_SortingOrder: 0
@@ -90,7 +90,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2998487930133260824
 Transform:
   m_ObjectHideFlags: 0
@@ -327,6 +327,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5362799589995500358}
+  - component: {fileID: 8872525525299073140}
+  - component: {fileID: 780218703103122678}
   m_Layer: 0
   m_Name: UI System
   m_TagString: Untagged
@@ -352,3 +354,36 @@ Transform:
   - {fileID: 2998487930133260824}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8872525525299073140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6997902689708678342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f979f8d9a8399e42abdaaaa68360e43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIPanelManager
+  uiDocuments: []
+  managedPanels: []
+  debugToggleKey: 282
+  enableDebugUI: 1
+--- !u!114 &780218703103122678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6997902689708678342}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9839013e69a1961468e85e053cf4f8c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameUIController
+  gameHUDDocument: {fileID: 2053683982982553777}
+  debugUIDocument: {fileID: 8114534661144797495}
+  mainMenuDocument: {fileID: 0}
+  replaceOldUI: 0
+  enableDebugMode: 1

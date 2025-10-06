@@ -310,7 +310,7 @@ public class GameHUDController : UIToolkitPanel
     {
         Debug.Log("OnOpenInventory");
         // This would open the full inventory UI
-        if (UIManager.Instance != null) UIManager.Instance.TogglePanel("InventoryPanel");
+        if (UIPanelManager.Instance != null) UIPanelManager.Instance.TogglePanel("InventoryPanel");
     }
 
     private void UpdateWeatherDisplay()

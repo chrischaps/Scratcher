@@ -1,19 +1,20 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using Terrain;
 
 public class TerrainAwarePlayerController : IsometricPlayerController
 {
-    [Header("Terrain Integration")]
-    [SerializeField] private TerrainLayerManager terrainManager;
     [SerializeField] private LayerMask groundCheckLayer = 1;
     [SerializeField] private float groundCheckRadius = 0.1f;
 
-    [Header("Movement Feedback")]
-    [SerializeField] private ParticleSystem movementParticles;
-    [SerializeField] private AudioSource movementAudio;
+    [Header("Movement Feedback")] [SerializeField]
+    private ParticleSystem movementParticles;
 
-    private TerrainType currentTerrainType = TerrainType.Grass;
+    [SerializeField] private AudioSource movementAudio;
     private float currentSpeedModifier = 1f;
+
+    private readonly TerrainType currentTerrainType = TerrainType.Grass;
+
+    [Header("Terrain Integration")] private TerrainLayerManager terrainManager;
 
     protected override void Awake()
     {
@@ -29,36 +30,49 @@ public class TerrainAwarePlayerController : IsometricPlayerController
         HandleTerrainMovement();
     }
 
+    private void OnDrawGizmosSelected()
+    {
+        // Draw ground check radius
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, groundCheckRadius);
+
+        // Show movement bounds
+        if (terrainManager != null)
+        {
+            Gizmos.color = IsOnWalkableTerrain() ? Color.green : Color.red;
+            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.5f);
+        }
+    }
+
     private void CheckCurrentTerrain()
     {
         if (terrainManager == null) return;
 
-        Vector3 checkPosition = transform.position;
+        var checkPosition = transform.position;
 
         // Get terrain info at current position
         if (terrainManager.IsWalkable(checkPosition))
-        {
             currentSpeedModifier = terrainManager.GetMovementSpeedModifier(checkPosition);
-        }
         else
-        {
             // Player is on unwalkable terrain - could implement sliding or stopping logic
             currentSpeedModifier = 0.5f; // Slow movement on unwalkable terrain
-        }
     }
 
     private void HandleTerrainMovement()
     {
         if (terrainManager != null)
         {
-            Vector3 intendedPosition = transform.position + (Vector3)(ConvertToIsometric(moveInput) * moveSpeed * currentSpeedModifier * (isSprinting ? sprintMultiplier : 1f) * Time.fixedDeltaTime);
+            var intendedPosition = transform.position + (Vector3)(ConvertToIsometric(moveInput) * moveSpeed *
+                                                                  currentSpeedModifier *
+                                                                  (isSprinting ? sprintMultiplier : 1f) *
+                                                                  Time.fixedDeltaTime);
 
             // Check if the intended position is walkable
             if (terrainManager.IsWalkable(intendedPosition))
             {
                 // Move normally with terrain speed modifier
-                Vector2 isometricMovement = ConvertToIsometric(moveInput);
-                float currentSpeed = moveSpeed * currentSpeedModifier * (isSprinting ? sprintMultiplier : 1f);
+                var isometricMovement = ConvertToIsometric(moveInput);
+                var currentSpeed = moveSpeed * currentSpeedModifier * (isSprinting ? sprintMultiplier : 1f);
                 rb.linearVelocity = isometricMovement * currentSpeed;
 
                 UpdateMovementEffects();
@@ -72,8 +86,8 @@ public class TerrainAwarePlayerController : IsometricPlayerController
         else
         {
             // Use default movement
-            Vector2 isometricMovement = ConvertToIsometric(moveInput);
-            float currentSpeed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
+            var isometricMovement = ConvertToIsometric(moveInput);
+            var currentSpeed = moveSpeed * (isSprinting ? sprintMultiplier : 1f);
             rb.linearVelocity = isometricMovement * currentSpeed;
         }
     }
@@ -95,10 +109,8 @@ public class TerrainAwarePlayerController : IsometricPlayerController
 
             // Play terrain-appropriate footstep sounds
             if (movementAudio != null && !movementAudio.isPlaying)
-            {
                 // You can set different audio clips based on terrain type
                 movementAudio.Play();
-            }
         }
         else
         {
@@ -133,19 +145,5 @@ public class TerrainAwarePlayerController : IsometricPlayerController
     public float GetCurrentSpeedModifier()
     {
         return currentSpeedModifier;
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        // Draw ground check radius
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, groundCheckRadius);
-
-        // Show movement bounds
-        if (terrainManager != null)
-        {
-            Gizmos.color = IsOnWalkableTerrain() ? Color.green : Color.red;
-            Gizmos.DrawWireCube(transform.position, Vector3.one * 0.5f);
-        }
     }
 }

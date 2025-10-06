@@ -1,26 +1,28 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
+using Terrain;
 
 public class GridBasedPlayerController : MonoBehaviour
 {
-    [Header("Grid Movement Settings")]
-    [SerializeField] private float moveSpeed = 5f;
-    [SerializeField] private bool useGridMovement = false;
+    [Header("Grid Movement Settings")] [SerializeField]
+    private float moveSpeed = 5f;
+
+    [SerializeField] private bool useGridMovement;
     [SerializeField] private Grid gameGrid;
     [SerializeField] private GridType gridType = GridType.Isometric;
 
-    [Header("Animation")]
-    [SerializeField] private Animator animator;
-    [SerializeField] private SpriteRenderer spriteRenderer;
+    [Header("Animation")] [SerializeField] private Animator animator;
 
-    [Header("Terrain Integration")]
-    [SerializeField] private TerrainLayerManager terrainManager;
+    [SerializeField] private SpriteRenderer spriteRenderer;
+    private bool isMoving;
+    private bool isSprinting;
 
     private Vector2 moveInput;
-    private bool isSprinting;
-    private bool isMoving = false;
     private Vector3 targetPosition;
+
+    [Header("Terrain Integration")] private TerrainLayerManager terrainManager;
+
+    public bool IsMoving => useGridMovement ? isMoving : moveInput.magnitude > 0.1f;
 
     private void Awake()
     {
@@ -38,6 +40,17 @@ public class GridBasedPlayerController : MonoBehaviour
         targetPosition = transform.position;
     }
 
+    private void Update()
+    {
+        if (useGridMovement)
+            UpdateGridMovement();
+        else
+            UpdateSmoothMovement();
+
+        UpdateAnimations();
+        HandleSpriteDirection();
+    }
+
     public void OnMove(InputAction.CallbackContext context)
     {
         if (useGridMovement)
@@ -45,7 +58,7 @@ public class GridBasedPlayerController : MonoBehaviour
             // For grid movement, only accept input when not currently moving
             if (!isMoving && context.performed)
             {
-                Vector2 input = context.ReadValue<Vector2>();
+                var input = context.ReadValue<Vector2>();
                 TryMoveToAdjacentTile(input);
             }
         }
@@ -63,45 +76,25 @@ public class GridBasedPlayerController : MonoBehaviour
             isSprinting = false;
     }
 
-    private void Update()
-    {
-        if (useGridMovement)
-        {
-            UpdateGridMovement();
-        }
-        else
-        {
-            UpdateSmoothMovement();
-        }
-
-        UpdateAnimations();
-        HandleSpriteDirection();
-    }
-
     private void TryMoveToAdjacentTile(Vector2 input)
     {
         if (gameGrid == null) return;
 
         // Convert input to grid direction
-        Vector3Int direction = Vector3Int.zero;
+        var direction = Vector3Int.zero;
 
         if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-        {
             direction.x = input.x > 0 ? 1 : -1;
-        }
-        else if (input.y != 0)
-        {
-            direction.y = input.y > 0 ? 1 : -1;
-        }
+        else if (input.y != 0) direction.y = input.y > 0 ? 1 : -1;
 
         if (direction == Vector3Int.zero) return;
 
         // Get current grid position
-        Vector3Int currentCell = gameGrid.WorldToCell(transform.position);
-        Vector3Int targetCell = currentCell + direction;
+        var currentCell = gameGrid.WorldToCell(transform.position);
+        var targetCell = currentCell + direction;
 
         // Check if target position is walkable
-        Vector3 worldTargetPos = gameGrid.CellToWorld(targetCell);
+        var worldTargetPos = gameGrid.CellToWorld(targetCell);
         // Center the character in the grid cell
         worldTargetPos += new Vector3(gameGrid.cellSize.x * 0.5f, gameGrid.cellSize.y * 0.5f, 0f);
 
@@ -117,7 +110,7 @@ public class GridBasedPlayerController : MonoBehaviour
         if (isMoving)
         {
             // Move towards target position
-            float currentSpeed = moveSpeed * (isSprinting ? 1.5f : 1f);
+            var currentSpeed = moveSpeed * (isSprinting ? 1.5f : 1f);
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, currentSpeed * Time.deltaTime);
 
             // Check if we've reached the target
@@ -133,14 +126,12 @@ public class GridBasedPlayerController : MonoBehaviour
     {
         if (moveInput.magnitude > 0.1f)
         {
-            Vector2 convertedInput = ConvertInputForGridType(moveInput);
-            Vector3 intendedPosition = transform.position + (Vector3)(convertedInput * moveSpeed * Time.deltaTime);
+            var convertedInput = ConvertInputForGridType(moveInput);
+            var intendedPosition = transform.position + (Vector3)(convertedInput * moveSpeed * Time.deltaTime);
 
             // Check terrain if available
             if (terrainManager == null || terrainManager.IsWalkable(intendedPosition))
-            {
                 transform.position = intendedPosition;
-            }
         }
     }
 
@@ -166,7 +157,7 @@ public class GridBasedPlayerController : MonoBehaviour
     {
         if (animator == null) return;
 
-        bool moving = useGridMovement ? isMoving : moveInput.magnitude > 0.1f;
+        var moving = useGridMovement ? isMoving : moveInput.magnitude > 0.1f;
         animator.SetBool("IsMoving", moving);
         animator.SetBool("IsSprinting", isSprinting && moving);
 
@@ -181,9 +172,11 @@ public class GridBasedPlayerController : MonoBehaviour
     {
         if (spriteRenderer == null) return;
 
-        Vector2 currentInput = useGridMovement ?
-            ((targetPosition - transform.position).magnitude > 0.1f ? (Vector2)(targetPosition - transform.position).normalized : Vector2.zero) :
-            moveInput;
+        var currentInput = useGridMovement
+            ? (targetPosition - transform.position).magnitude > 0.1f
+                ? (targetPosition - transform.position).normalized
+                : Vector2.zero
+            : moveInput;
 
         if (currentInput.magnitude > 0.1f)
         {
@@ -198,17 +191,15 @@ public class GridBasedPlayerController : MonoBehaviour
     {
         useGridMovement = enabled;
         if (enabled)
-        {
             // Snap to nearest grid position (centered)
             if (gameGrid != null)
             {
-                Vector3Int currentCell = gameGrid.WorldToCell(transform.position);
-                Vector3 centeredPosition = gameGrid.CellToWorld(currentCell) +
-                    new Vector3(gameGrid.cellSize.x * 0.5f, gameGrid.cellSize.y * 0.5f, 0f);
+                var currentCell = gameGrid.WorldToCell(transform.position);
+                var centeredPosition = gameGrid.CellToWorld(currentCell) +
+                                       new Vector3(gameGrid.cellSize.x * 0.5f, gameGrid.cellSize.y * 0.5f, 0f);
                 transform.position = centeredPosition;
                 targetPosition = transform.position;
             }
-        }
     }
 
     public void SetGridType(GridType newGridType)
@@ -217,15 +208,12 @@ public class GridBasedPlayerController : MonoBehaviour
 
         // Update the grid's cell layout if we have access to it
         if (gameGrid != null)
-        {
-            gameGrid.cellLayout = gridType == GridType.Isometric ? Grid.CellLayout.Isometric : Grid.CellLayout.Rectangle;
-        }
+            gameGrid.cellLayout = gridType == GridType.Isometric
+                ? GridLayout.CellLayout.Isometric
+                : GridLayout.CellLayout.Rectangle;
 
         // Snap to grid if using grid movement
-        if (useGridMovement)
-        {
-            SetGridMovement(true);
-        }
+        if (useGridMovement) SetGridMovement(true);
     }
 
     public void ApplyLevelConfiguration(LevelConfiguration levelConfig)
@@ -236,12 +224,11 @@ public class GridBasedPlayerController : MonoBehaviour
         moveSpeed = levelConfig.gridConfig.movementSpeed;
         SetGridMovement(levelConfig.gridConfig.useGridBasedMovement);
 
-        if (levelConfig.gridConfig != null)
-        {
-            levelConfig.ApplyToGrid(gameGrid);
-        }
+        if (levelConfig.gridConfig != null) levelConfig.ApplyToGrid(gameGrid);
     }
 
-    public bool IsMoving => useGridMovement ? isMoving : moveInput.magnitude > 0.1f;
-    public GridType GetCurrentGridType() => gridType;
+    public GridType GetCurrentGridType()
+    {
+        return gridType;
+    }
 }

@@ -1,209 +1,185 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/DebugUI.uss?fileID=7433441132597879392&amp;guid=ff453a501fff2a24b99d800e0c1f546f&amp;type=3#DebugUI" />
     <ui:VisualElement name="debug-panel" class="debug-panel">
         <ui:VisualElement name="debug-header" class="debug-header">
-            <ui:Label text="Debug Panel" display-tooltip-when-elided="true" name="debug-title" class="debug-title"/>
-            <ui:Button text="×" display-tooltip-when-elided="true" name="close-button" class="close-button"/>
+            <ui:Label text="Debug Panel" display-tooltip-when-elided="true" name="debug-title" class="debug-title" />
+            <ui:Button text="×" display-tooltip-when-elided="true" name="close-button" class="close-button" />
         </ui:VisualElement>
-
         <ui:VisualElement name="debug-tabs" class="debug-tabs">
-            <ui:Button text="System" display-tooltip-when-elided="true" name="tab-system"
-                       class="tab-button tab-active"/>
-            <ui:Button text="Game State" display-tooltip-when-elided="true" name="tab-gamestate" class="tab-button"/>
-            <ui:Button text="Fishing" display-tooltip-when-elided="true" name="tab-fishing" class="tab-button"/>
-            <ui:Button text="Terrain" display-tooltip-when-elided="true" name="tab-terrain" class="tab-button"/>
-            <ui:Button text="Cheats" display-tooltip-when-elided="true" name="tab-cheats" class="tab-button"/>
+            <ui:Button text="System" display-tooltip-when-elided="true" name="tab-system" class="tab-button tab-active" />
+            <ui:Button text="Game State" display-tooltip-when-elided="true" name="tab-gamestate" class="tab-button" />
+            <ui:Button text="Fishing" display-tooltip-when-elided="true" name="tab-fishing" class="tab-button" />
+            <ui:Button text="Terrain" display-tooltip-when-elided="true" name="tab-terrain" class="tab-button" />
+            <ui:Button text="Cheats" display-tooltip-when-elided="true" name="tab-cheats" class="tab-button" />
         </ui:VisualElement>
-
         <ui:ScrollView name="debug-content" class="debug-content">
-            <!-- System Stats Tab -->
             <ui:VisualElement name="system-tab" class="tab-content tab-active">
                 <ui:VisualElement name="performance-section" class="debug-section">
-                    <ui:Label text="Performance" class="section-header"/>
+                    <ui:Label text="Performance" class="section-header" />
                     <ui:VisualElement class="stats-grid">
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="FPS:" class="stat-label"/>
-                            <ui:Label text="60" name="fps-value" class="stat-value"/>
+                            <ui:Label text="FPS:" class="stat-label" />
+                            <ui:Label text="60" name="fps-value" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Frame Time:" class="stat-label"/>
-                            <ui:Label text="16.7ms" name="frametime-value" class="stat-value"/>
+                            <ui:Label text="Frame Time:" class="stat-label" />
+                            <ui:Label text="16.7ms" name="frametime-value" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Memory:" class="stat-label"/>
-                            <ui:Label text="0 MB" name="memory-value" class="stat-value"/>
+                            <ui:Label text="Memory:" class="stat-label" />
+                            <ui:Label text="0 MB" name="memory-value" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="GameObjects:" class="stat-label"/>
-                            <ui:Label text="0" name="gameobjects-value" class="stat-value"/>
+                            <ui:Label text="GameObjects:" class="stat-label" />
+                            <ui:Label text="0" name="gameobjects-value" class="stat-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="unity-stats-section" class="debug-section">
-                    <ui:Label text="Unity Stats" class="section-header"/>
+                    <ui:Label text="Unity Stats" class="section-header" />
                     <ui:VisualElement class="stats-grid">
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Draw Calls:" class="stat-label"/>
-                            <ui:Label text="0" name="drawcalls-value" class="stat-value"/>
+                            <ui:Label text="Draw Calls:" class="stat-label" />
+                            <ui:Label text="0" name="drawcalls-value" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Triangles:" class="stat-label"/>
-                            <ui:Label text="0" name="triangles-value" class="stat-value"/>
+                            <ui:Label text="Triangles:" class="stat-label" />
+                            <ui:Label text="0" name="triangles-value" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Vertices:" class="stat-label"/>
-                            <ui:Label text="0" name="vertices-value" class="stat-value"/>
+                            <ui:Label text="Vertices:" class="stat-label" />
+                            <ui:Label text="0" name="vertices-value" class="stat-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <!-- Game State Tab -->
             <ui:VisualElement name="gamestate-tab" class="tab-content">
                 <ui:VisualElement name="time-section" class="debug-section">
-                    <ui:Label text="Time Controls" class="section-header"/>
+                    <ui:Label text="Time Controls" class="section-header" />
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Current Time:" class="control-label"/>
-                        <ui:Slider picking-mode="Ignore" value="8" high-value="24" name="time-slider"
-                                   class="time-slider"/>
-                        <ui:Label text="8:00 AM" name="time-display" class="control-value"/>
+                        <ui:Label text="Current Time:" class="control-label" />
+                        <ui:Slider picking-mode="Ignore" value="8" high-value="24" name="time-slider" class="time-slider" />
+                        <ui:Label text="8:00 AM" name="time-display" class="control-value" />
                     </ui:VisualElement>
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Day:" class="control-label"/>
-                        <ui:Label text="1" name="day-value" class="control-value"/>
-                        <ui:Button text="Next Day" name="next-day-button" class="control-button"/>
+                        <ui:Label text="Day:" class="control-label" />
+                        <ui:Label text="1" name="day-value" class="control-value" />
+                        <ui:Button text="Next Day" name="next-day-button" class="control-button" />
                     </ui:VisualElement>
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Time Scale:" class="control-label"/>
-                        <ui:Slider picking-mode="Ignore" value="1" high-value="10" low-value="0" name="timescale-slider"
-                                   class="control-slider"/>
-                        <ui:Label text="1x" name="timescale-display" class="control-value"/>
+                        <ui:Label text="Time Scale:" class="control-label" />
+                        <ui:Slider picking-mode="Ignore" value="1" high-value="10" low-value="0" name="timescale-slider" class="control-slider" />
+                        <ui:Label text="1x" name="timescale-display" class="control-value" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="player-section" class="debug-section">
-                    <ui:Label text="Player Info" class="section-header"/>
+                    <ui:Label text="Player Info" class="section-header" />
                     <ui:VisualElement class="stats-grid">
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Position:" class="stat-label"/>
-                            <ui:Label text="(0, 0, 0)" name="player-position" class="stat-value"/>
+                            <ui:Label text="Position:" class="stat-label" />
+                            <ui:Label text="(0, 0, 0)" name="player-position" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Is Moving:" class="stat-label"/>
-                            <ui:Label text="False" name="player-moving" class="stat-value"/>
+                            <ui:Label text="Is Moving:" class="stat-label" />
+                            <ui:Label text="False" name="player-moving" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Is Fishing:" class="stat-label"/>
-                            <ui:Label text="False" name="player-fishing" class="stat-value"/>
+                            <ui:Label text="Is Fishing:" class="stat-label" />
+                            <ui:Label text="False" name="player-fishing" class="stat-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="inventory-section" class="debug-section">
-                    <ui:Label text="Inventory" class="section-header"/>
+                    <ui:Label text="Inventory" class="section-header" />
                     <ui:VisualElement class="stats-grid">
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Fish Count:" class="stat-label"/>
-                            <ui:Label text="0" name="fish-count" class="stat-value"/>
+                            <ui:Label text="Fish Count:" class="stat-label" />
+                            <ui:Label text="0" name="fish-count" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Total Value:" class="stat-label"/>
-                            <ui:Label text="0" name="total-value" class="stat-value"/>
+                            <ui:Label text="Total Value:" class="stat-label" />
+                            <ui:Label text="0" name="total-value" class="stat-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
-                    <ui:Button text="Clear Inventory" name="clear-inventory-button" class="control-button"/>
+                    <ui:Button text="Clear Inventory" name="clear-inventory-button" class="control-button" />
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <!-- Fishing Debug Tab -->
             <ui:VisualElement name="fishing-tab" class="tab-content">
                 <ui:VisualElement name="fishing-info-section" class="debug-section">
-                    <ui:Label text="Fishing System" class="section-header"/>
+                    <ui:Label text="Fishing System" class="section-header" />
                     <ui:VisualElement class="stats-grid">
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Near Water:" class="stat-label"/>
-                            <ui:Label text="False" name="near-water" class="stat-value"/>
+                            <ui:Label text="Near Water:" class="stat-label" />
+                            <ui:Label text="False" name="near-water" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Water Type:" class="stat-label"/>
-                            <ui:Label text="None" name="water-type" class="stat-value"/>
+                            <ui:Label text="Water Type:" class="stat-label" />
+                            <ui:Label text="None" name="water-type" class="stat-value" />
                         </ui:VisualElement>
                         <ui:VisualElement class="stat-item">
-                            <ui:Label text="Available Fish:" class="stat-label"/>
-                            <ui:Label text="0" name="available-fish-count" class="stat-value"/>
+                            <ui:Label text="Available Fish:" class="stat-label" />
+                            <ui:Label text="0" name="available-fish-count" class="stat-value" />
                         </ui:VisualElement>
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="fish-database-section" class="debug-section">
-                    <ui:Label text="Fish Database" class="section-header"/>
+                    <ui:Label text="Fish Database" class="section-header" />
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Total Fish Types:" class="control-label"/>
-                        <ui:Label text="0" name="total-fish-types" class="control-value"/>
+                        <ui:Label text="Total Fish Types:" class="control-label" />
+                        <ui:Label text="0" name="total-fish-types" class="control-value" />
                     </ui:VisualElement>
-                    <ui:ScrollView name="fish-list" class="fish-list">
-                        <!-- Fish entries will be populated dynamically -->
-                    </ui:ScrollView>
+                    <ui:ScrollView name="fish-list" class="fish-list" />
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <!-- Terrain Debug Tab -->
             <ui:VisualElement name="terrain-tab" class="tab-content">
                 <ui:VisualElement name="terrain-controls-section" class="debug-section">
-                    <ui:Label text="Terrain Generation" class="section-header"/>
+                    <ui:Label text="Terrain Generation" class="section-header" />
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Map Size:" class="control-label"/>
-                        <ui:SliderInt picking-mode="Ignore" value="50" high-value="200" low-value="10"
-                                      name="map-size-slider" class="control-slider"/>
-                        <ui:Label text="50x50" name="map-size-display" class="control-value"/>
+                        <ui:Label text="Map Size:" class="control-label" />
+                        <ui:SliderInt picking-mode="Ignore" value="50" high-value="200" low-value="10" name="map-size-slider" class="control-slider" />
+                        <ui:Label text="50x50" name="map-size-display" class="control-value" />
                     </ui:VisualElement>
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Noise Scale:" class="control-label"/>
-                        <ui:Slider picking-mode="Ignore" value="0.1" high-value="1" low-value="0.01"
-                                   name="noise-scale-slider" class="control-slider"/>
-                        <ui:Label text="0.1" name="noise-scale-display" class="control-value"/>
+                        <ui:Label text="Noise Scale:" class="control-label" />
+                        <ui:Slider picking-mode="Ignore" value="0.1" high-value="1" low-value="0.01" name="noise-scale-slider" class="control-slider" />
+                        <ui:Label text="0.1" name="noise-scale-display" class="control-value" />
                     </ui:VisualElement>
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Water Threshold:" class="control-label"/>
-                        <ui:Slider picking-mode="Ignore" value="0.3" high-value="1" low-value="0"
-                                   name="water-threshold-slider" class="control-slider"/>
-                        <ui:Label text="0.3" name="water-threshold-display" class="control-value"/>
+                        <ui:Label text="Water Threshold:" class="control-label" />
+                        <ui:Slider picking-mode="Ignore" value="0.3" high-value="1" low-value="0" name="water-threshold-slider" class="control-slider" />
+                        <ui:Label text="0.3" name="water-threshold-display" class="control-value" />
                     </ui:VisualElement>
                     <ui:VisualElement class="button-row">
-                        <ui:Button text="Generate Terrain" name="generate-terrain-button" class="action-button"/>
-                        <ui:Button text="Clear Terrain" name="clear-terrain-button" class="action-button"/>
+                        <ui:Button text="Generate Terrain" name="generate-terrain-button" class="action-button" />
+                        <ui:Button text="Clear Terrain" name="clear-terrain-button" class="action-button" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>
-
-            <!-- Cheats Tab -->
             <ui:VisualElement name="cheats-tab" class="tab-content">
                 <ui:VisualElement name="fish-cheats-section" class="debug-section">
-                    <ui:Label text="Fish Cheats" class="section-header"/>
+                    <ui:Label text="Fish Cheats" class="section-header" />
                     <ui:VisualElement class="button-row">
-                        <ui:Button text="Add Random Fish" name="add-random-fish-button" class="cheat-button"/>
-                        <ui:Button text="Add Rare Fish" name="add-rare-fish-button" class="cheat-button"/>
-                        <ui:Button text="Fill Inventory" name="fill-inventory-button" class="cheat-button"/>
+                        <ui:Button text="Add Random Fish" name="add-random-fish-button" class="cheat-button" />
+                        <ui:Button text="Add Rare Fish" name="add-rare-fish-button" class="cheat-button" />
+                        <ui:Button text="Fill Inventory" name="fill-inventory-button" class="cheat-button" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="player-cheats-section" class="debug-section">
-                    <ui:Label text="Player Cheats" class="section-header"/>
+                    <ui:Label text="Player Cheats" class="section-header" />
                     <ui:VisualElement class="control-row">
-                        <ui:Label text="Teleport X:" class="control-label"/>
-                        <ui:FloatField value="0" name="teleport-x" class="control-input"/>
-                        <ui:Label text="Y:" class="control-label"/>
-                        <ui:FloatField value="0" name="teleport-y" class="control-input"/>
-                        <ui:Button text="Teleport" name="teleport-button" class="control-button"/>
+                        <ui:Label text="Teleport X:" class="control-label" />
+                        <ui:FloatField value="0" name="teleport-x" class="control-input" />
+                        <ui:Label text="Y:" class="control-label" />
+                        <ui:FloatField value="0" name="teleport-y" class="control-input" />
+                        <ui:Button text="Teleport" name="teleport-button" class="control-button" />
                     </ui:VisualElement>
                 </ui:VisualElement>
-
                 <ui:VisualElement name="system-cheats-section" class="debug-section">
-                    <ui:Label text="System Cheats" class="section-header"/>
+                    <ui:Label text="System Cheats" class="section-header" />
                     <ui:VisualElement class="button-row">
-                        <ui:Button text="God Mode" name="god-mode-button" class="cheat-button"/>
-                        <ui:Button text="No Clip" name="noclip-button" class="cheat-button"/>
-                        <ui:Button text="Reset Game" name="reset-game-button" class="cheat-button"/>
+                        <ui:Button text="God Mode" name="god-mode-button" class="cheat-button" />
+                        <ui:Button text="No Clip" name="noclip-button" class="cheat-button" />
+                        <ui:Button text="Reset Game" name="reset-game-button" class="cheat-button" />
                     </ui:VisualElement>
                 </ui:VisualElement>
             </ui:VisualElement>

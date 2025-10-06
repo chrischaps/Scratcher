@@ -12,7 +12,7 @@ public class TerrainAwarePlayerController : IsometricPlayerController
     [SerializeField] private AudioSource movementAudio;
     private float currentSpeedModifier = 1f;
 
-    private readonly TerrainType currentTerrainType = TerrainType.Grass;
+    private const TerrainType CurrentTerrainType = TerrainType.Grass;
 
     [Header("Terrain Integration")] private TerrainLayerManager terrainManager;
 
@@ -21,7 +21,7 @@ public class TerrainAwarePlayerController : IsometricPlayerController
         base.Awake();
 
         if (terrainManager == null)
-            terrainManager = FindObjectOfType<TerrainLayerManager>();
+            terrainManager = FindFirstObjectByType<TerrainLayerManager>();
     }
 
     private new void FixedUpdate()
@@ -104,7 +104,7 @@ public class TerrainAwarePlayerController : IsometricPlayerController
 
                 // Modify particle color/rate based on terrain type
                 var main = movementParticles.main;
-                main.startColor = GetTerrainParticleColor(currentTerrainType);
+                main.startColor = GetTerrainParticleColor(CurrentTerrainType);
             }
 
             // Play terrain-appropriate footstep sounds
@@ -139,7 +139,7 @@ public class TerrainAwarePlayerController : IsometricPlayerController
 
     public TerrainType GetCurrentTerrainType()
     {
-        return currentTerrainType;
+        return CurrentTerrainType;
     }
 
     public float GetCurrentSpeedModifier()

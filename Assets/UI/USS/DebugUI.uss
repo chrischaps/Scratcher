@@ -1,0 +1,314 @@
+/* Debug Panel Base Styles */
+.debug-panel {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    width: 400px;
+    max-height: 70%;
+    background-color: rgba(32, 32, 32, 0.95);
+    border-color: rgba(128, 128, 128, 0.5);
+    border-width: 1px;
+    border-radius: 8px;
+    padding: 0;
+    flex-direction: column;
+    display: none;
+}
+
+/* Header Styles */
+.debug-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(64, 64, 64, 0.8);
+    padding: 8px 12px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(128, 128, 128, 0.3);
+}
+
+.debug-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    -unity-font-style: bold;
+}
+
+.close-button {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(192, 64, 64, 0.8);
+    border-width: 0;
+    border-radius: 4px;
+    color: white;
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.close-button:hover {
+    background-color: rgba(220, 80, 80, 1);
+}
+
+/* Tab Navigation */
+.debug-tabs {
+    flex-direction: row;
+    background-color: rgba(48, 48, 48, 0.8);
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(128, 128, 128, 0.3);
+}
+
+.tab-button {
+    flex: 1;
+    height: 32px;
+    background-color: transparent;
+    border-width: 0;
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 11px;
+    border-radius: 0;
+    margin: 0;
+}
+
+.tab-button:hover {
+    background-color: rgba(80, 80, 80, 0.6);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.tab-button.tab-active {
+    background-color: rgba(100, 150, 220, 0.6);
+    color: white;
+    -unity-font-style: bold;
+}
+
+/* Content Area */
+.debug-content {
+    flex: 1;
+    padding: 12px;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.tab-active {
+    display: flex;
+}
+
+/* Section Styles */
+.debug-section {
+    margin-bottom: 16px;
+    padding: 8px;
+    background-color: rgba(48, 48, 48, 0.4);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(128, 128, 128, 0.2);
+}
+
+.section-header {
+    color: rgba(150, 200, 255, 0.9);
+    font-size: 12px;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(128, 128, 128, 0.3);
+    padding-bottom: 4px;
+}
+
+/* Stats Grid */
+.stats-grid {
+    flex-direction: column;
+    margin-top: 4px;
+}
+
+.stat-item {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 0;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(128, 128, 128, 0.1);
+}
+
+.stat-item:last-child {
+    border-bottom-width: 0;
+}
+
+.stat-label {
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 10px;
+    flex: 1;
+}
+
+.stat-value {
+    color: rgba(150, 255, 150, 0.9);
+    font-size: 10px;
+    -unity-font-style: bold;
+    text-align: right;
+    min-width: 60px;
+}
+
+/* Control Rows */
+.control-row {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 6px;
+    padding: 4px 0;
+}
+
+.control-label {
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 10px;
+    width: 80px;
+    min-width: 80px;
+}
+
+.control-value {
+    color: rgba(255, 255, 150, 0.9);
+    font-size: 10px;
+    -unity-font-style: bold;
+    width: 60px;
+    text-align: right;
+}
+
+.control-slider {
+    flex: 1;
+    margin: 0 8px;
+}
+
+.control-input {
+    width: 60px;
+    height: 20px;
+    margin: 0 4px;
+    background-color: rgba(64, 64, 64, 0.8);
+    border-color: rgba(128, 128, 128, 0.5);
+    color: white;
+    font-size: 10px;
+}
+
+.control-button {
+    height: 20px;
+    min-width: 60px;
+    background-color: rgba(80, 120, 180, 0.8);
+    border-width: 0;
+    border-radius: 3px;
+    color: white;
+    font-size: 10px;
+    margin-left: 4px;
+}
+
+.control-button:hover {
+    background-color: rgba(100, 140, 200, 1);
+}
+
+/* Button Rows */
+.button-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+
+.action-button {
+    height: 24px;
+    min-width: 80px;
+    background-color: rgba(80, 180, 80, 0.8);
+    border-width: 0;
+    border-radius: 4px;
+    color: white;
+    font-size: 11px;
+    margin: 2px 4px 2px 0;
+}
+
+.action-button:hover {
+    background-color: rgba(100, 200, 100, 1);
+}
+
+.cheat-button {
+    height: 24px;
+    min-width: 80px;
+    background-color: rgba(200, 100, 80, 0.8);
+    border-width: 0;
+    border-radius: 4px;
+    color: white;
+    font-size: 11px;
+    margin: 2px 4px 2px 0;
+}
+
+.cheat-button:hover {
+    background-color: rgba(220, 120, 100, 1);
+}
+
+/* Time Slider Special Styling */
+.time-slider {
+    flex: 1;
+    margin: 0 8px;
+}
+
+.time-slider .unity-base-slider__tracker {
+    background-color: rgba(100, 100, 100, 0.6);
+    border-radius: 4px;
+    height: 6px;
+}
+
+.time-slider .unity-base-slider__dragger {
+    width: 12px;
+    height: 12px;
+    background-color: rgba(255, 200, 100, 0.9);
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+/* Fish List */
+.fish-list {
+    max-height: 120px;
+    background-color: rgba(32, 32, 32, 0.6);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(128, 128, 128, 0.3);
+    padding: 4px;
+    margin-top: 4px;
+}
+
+.fish-item {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 2px 4px;
+    margin-bottom: 2px;
+    background-color: rgba(64, 64, 64, 0.4);
+    border-radius: 2px;
+}
+
+.fish-name {
+    color: rgba(200, 200, 255, 0.9);
+    font-size: 10px;
+    flex: 1;
+}
+
+.fish-rarity {
+    color: rgba(255, 200, 100, 0.9);
+    font-size: 10px;
+    text-align: right;
+    min-width: 40px;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 800px) {
+    .debug-panel {
+        width: 350px;
+        right: 10px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .debug-panel {
+        width: 300px;
+        right: 5px;
+        top: 30px;
+    }
+
+    .debug-tabs {
+        flex-wrap: wrap;
+    }
+
+    .tab-button {
+        min-width: 60px;
+    }
+}

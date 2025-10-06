@@ -1,0 +1,158 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="main-menu" class="main-menu">
+        <ui:VisualElement name="background" class="background" />
+        <ui:VisualElement name="title-container" class="title-container">
+            <ui:Label text="SCRATCHER" name="game-title" class="game-title" />
+            <ui:Label text="A Fishing Adventure" name="game-subtitle" class="game-subtitle" />
+        </ui:VisualElement>
+        <ui:VisualElement name="main-navigation" class="main-navigation">
+            <ui:Button text="New Game" name="new-game-button" class="menu-button primary-button" />
+            <ui:Button text="Continue" name="continue-button" class="menu-button secondary-button" />
+            <ui:Button text="Load Game" name="load-game-button" class="menu-button secondary-button" />
+            <ui:Button text="Settings" name="settings-button" class="menu-button secondary-button" />
+            <ui:Button text="Credits" name="credits-button" class="menu-button secondary-button" />
+            <ui:Button text="Quit" name="quit-button" class="menu-button danger-button" />
+        </ui:VisualElement>
+        <ui:VisualElement name="settings-panel" enabled="false" class="settings-panel">
+            <ui:VisualElement name="settings-header" class="panel-header">
+                <ui:Label text="Settings" class="panel-title" />
+                <ui:Button text="×" name="close-settings" class="close-button" />
+            </ui:VisualElement>
+            <ui:ScrollView name="settings-content" class="settings-content">
+                <ui:VisualElement name="audio-section" class="settings-section">
+                    <ui:Label text="Audio" class="section-title" />
+                    <ui:VisualElement name="volume-controls" class="setting-group">
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Master Volume" class="setting-label" />
+                            <ui:Slider value="100" high-value="100" name="master-volume" class="volume-slider" />
+                            <ui:Label text="100%" name="master-volume-text" class="volume-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Music Volume" class="setting-label" />
+                            <ui:Slider value="80" high-value="100" name="music-volume" class="volume-slider" />
+                            <ui:Label text="80%" name="music-volume-text" class="volume-text" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="SFX Volume" class="setting-label" />
+                            <ui:Slider value="90" high-value="100" name="sfx-volume" class="volume-slider" />
+                            <ui:Label text="90%" name="sfx-volume-text" class="volume-text" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="graphics-section" class="settings-section">
+                    <ui:Label text="Graphics" class="section-title" />
+                    <ui:VisualElement name="graphics-controls" class="setting-group">
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Quality Level" class="setting-label" />
+                            <ui:DropdownField name="quality-dropdown" class="setting-dropdown" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Resolution" class="setting-label" />
+                            <ui:DropdownField name="resolution-dropdown" class="setting-dropdown" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Fullscreen" class="setting-label" />
+                            <ui:Toggle name="fullscreen-toggle" class="setting-toggle" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="VSync" class="setting-label" />
+                            <ui:Toggle name="vsync-toggle" class="setting-toggle" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="gameplay-section" class="settings-section">
+                    <ui:Label text="Gameplay" class="section-title" />
+                    <ui:VisualElement name="gameplay-controls" class="setting-group">
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Auto-Save" class="setting-label" />
+                            <ui:Toggle value="true" name="autosave-toggle" class="setting-toggle" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Show Tooltips" class="setting-label" />
+                            <ui:Toggle value="true" name="tooltips-toggle" class="setting-toggle" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Input Hints" class="setting-label" />
+                            <ui:Toggle value="true" name="input-hints-toggle" class="setting-toggle" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="setting-item">
+                            <ui:Label text="Camera Smoothing" class="setting-label" />
+                            <ui:Slider value="0.5" high-value="1" name="camera-smoothing" class="setting-slider" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+                <ui:VisualElement name="controls-section" class="settings-section">
+                    <ui:Label text="Controls" class="section-title" />
+                    <ui:VisualElement name="control-bindings" class="setting-group">
+                        <ui:VisualElement class="control-binding">
+                            <ui:Label text="Move" class="control-label" />
+                            <ui:Label text="WASD / Arrow Keys" class="control-key" />
+                            <ui:Button text="Rebind" class="rebind-button" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="control-binding">
+                            <ui:Label text="Cast Line" class="control-label" />
+                            <ui:Label text="Left Click / Enter" class="control-key" />
+                            <ui:Button text="Rebind" class="rebind-button" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="control-binding">
+                            <ui:Label text="Interact" class="control-label" />
+                            <ui:Label text="E" class="control-key" />
+                            <ui:Button text="Rebind" class="rebind-button" />
+                        </ui:VisualElement>
+                        <ui:VisualElement class="control-binding">
+                            <ui:Label text="Sprint" class="control-label" />
+                            <ui:Label text="Left Shift" class="control-key" />
+                            <ui:Button text="Rebind" class="rebind-button" />
+                        </ui:VisualElement>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+            </ui:ScrollView>
+            <ui:VisualElement name="settings-footer" class="settings-footer">
+                <ui:Button text="Reset to Defaults" name="reset-settings" class="secondary-button" />
+                <ui:Button text="Apply" name="apply-settings" class="primary-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="load-panel" enabled="false" class="load-panel">
+            <ui:VisualElement name="load-header" class="panel-header">
+                <ui:Label text="Load Game" class="panel-title" />
+                <ui:Button text="×" name="close-load" class="close-button" />
+            </ui:VisualElement>
+            <ui:ScrollView name="save-slots" class="save-slots" />
+            <ui:VisualElement name="load-footer" class="load-footer">
+                <ui:Button text="Delete Save" name="delete-save" class="danger-button" />
+                <ui:Button text="Load Selected" name="load-selected" class="primary-button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="credits-panel" enabled="false" class="credits-panel">
+            <ui:VisualElement name="credits-header" class="panel-header">
+                <ui:Label text="Credits" class="panel-title" />
+                <ui:Button text="×" name="close-credits" class="close-button" />
+            </ui:VisualElement>
+            <ui:ScrollView name="credits-content" class="credits-content">
+                <ui:VisualElement name="credits-section" class="credits-section">
+                    <ui:Label text="Development" class="credits-category" />
+                    <ui:Label text="Game Design &amp; Programming" class="credits-role" />
+                    <ui:Label text="Your Name" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement name="credits-section" class="credits-section">
+                    <ui:Label text="Art &amp; Assets" class="credits-category" />
+                    <ui:Label text="Sprout Lands Sprite Pack" class="credits-role" />
+                    <ui:Label text="Cup Nooble" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement name="credits-section" class="credits-section">
+                    <ui:Label text="Special Thanks" class="credits-category" />
+                    <ui:Label text="Unity Technologies" class="credits-role" />
+                    <ui:Label text="UI Toolkit Team" class="credits-name" />
+                </ui:VisualElement>
+                <ui:VisualElement name="credits-section" class="credits-section">
+                    <ui:Label text="Made with Unity 6000.2.5f1" class="credits-footer" />
+                    <ui:Label text="© 2024 Scratcher Game" class="credits-footer" />
+                </ui:VisualElement>
+            </ui:ScrollView>
+        </ui:VisualElement>
+        <ui:VisualElement name="version-info" class="version-info">
+            <ui:Label text="v1.0.0" name="version-label" class="version-label" />
+            <ui:Label text="Press F1 for Debug Menu" name="debug-hint" class="debug-hint" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

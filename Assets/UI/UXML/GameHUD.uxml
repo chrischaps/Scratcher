@@ -1,0 +1,72 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/USS/MainHUD.uss?fileID=7433441132597879392&amp;guid=02bd01dd2f4a56c4a88796f0b6d76733&amp;type=3#MainHUD" />
+    <ui:VisualElement name="game-hud" class="game-hud">
+        <ui:VisualElement name="top-bar" class="top-bar">
+            <ui:VisualElement name="time-panel" class="status-panel">
+                <ui:Label text="Day 1" name="day-label" class="day-label" />
+                <ui:Label text="8:00 AM" name="time-label" class="time-label" />
+                <ui:Label text="Morning" name="timeofday-label" class="timeofday-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="weather-panel" class="status-panel">
+                <ui:VisualElement name="weather-icon" class="weather-icon" />
+                <ui:Label text="Sunny" name="weather-label" class="weather-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="player-stats" class="status-panel">
+                <ui:VisualElement name="energy-container" class="stat-container">
+                    <ui:Label text="Energy" class="stat-label" />
+                    <ui:ProgressBar value="100" high-value="100" name="energy-bar" class="energy-bar" />
+                    <ui:Label text="100/100" name="energy-text" class="stat-text" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="bottom-bar" class="bottom-bar">
+            <ui:VisualElement name="inventory-summary" class="info-panel">
+                <ui:VisualElement name="fish-icon" class="icon fish-icon" />
+                <ui:Label text="0" name="fish-count" class="count-label" />
+                <ui:Label text="Fish" class="label-text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="money-summary" class="info-panel">
+                <ui:VisualElement name="coin-icon" class="icon coin-icon" />
+                <ui:Label text="0" name="money-amount" class="count-label" />
+                <ui:Label text="Coins" class="label-text" />
+            </ui:VisualElement>
+            <ui:VisualElement name="location-info" class="info-panel">
+                <ui:Label text="Fishing Pond" name="location-name" class="location-label" />
+                <ui:Label text="Press E to interact" name="interaction-hint" class="interaction-hint" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="notification-area" class="notification-area" />
+        <ui:VisualElement name="fishing-overlay" class="fishing-overlay">
+            <ui:VisualElement name="fishing-panel" class="fishing-panel">
+                <ui:Label text="Fishing..." name="fishing-status" class="fishing-status" />
+                <ui:ProgressBar value="0" high-value="100" name="fishing-progress" class="fishing-progress" />
+                <ui:Label text="Left click to reel in!" name="fishing-instruction" class="fishing-instruction" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="mini-inventory" class="mini-inventory">
+            <ui:VisualElement name="mini-inventory-header" class="mini-inventory-header">
+                <ui:Label text="Recent Catches" class="mini-inventory-title" />
+                <ui:Button text="..." name="open-inventory-button" class="open-inventory-button" />
+            </ui:VisualElement>
+            <ui:VisualElement name="mini-inventory-grid" class="mini-inventory-grid" />
+        </ui:VisualElement>
+        <ui:VisualElement name="input-hints" class="input-hints">
+            <ui:VisualElement name="hint-item" class="hint-item">
+                <ui:Label text="WASD" class="key-label" />
+                <ui:Label text="Move" class="action-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="hint-item" class="hint-item">
+                <ui:Label text="Click" class="key-label" />
+                <ui:Label text="Cast" class="action-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="hint-item" class="hint-item">
+                <ui:Label text="E" class="key-label" />
+                <ui:Label text="Interact" class="action-label" />
+            </ui:VisualElement>
+            <ui:VisualElement name="hint-item" class="hint-item">
+                <ui:Label text="I" class="key-label" />
+                <ui:Label text="Inventory" class="action-label" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

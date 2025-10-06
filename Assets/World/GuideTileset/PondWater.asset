@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da32b43e45512c74db1e3083727ce9f8, type: 3}
+  m_Name: PondWater
+  m_EditorClassIdentifier: Assembly-CSharp::WaterTile
+  tileSprite: {fileID: -7805873594454908723, guid: 811713ad6e23c6a4780078bb3ea27972, type: 3}
+  tileColor: {r: 0.16860795, g: 0.39587277, b: 0.7509433, a: 1}
+  tileTransform:
+    e00: 1
+    e01: 0
+    e02: 0
+    e03: 0
+    e10: 0
+    e11: 1
+    e12: 0
+    e13: 0
+    e20: 0
+    e21: 0
+    e22: 1
+    e23: 0
+    e30: 0
+    e31: 0
+    e32: 0
+    e33: 1
+  isWalkable: 0
+  isWater: 1
+  terrainType: 3
+  movementSpeedModifier: 1
+  tilePrefab: {fileID: 0}
+  useRandomRotation: 0
+  useRandomFlip: 0
+  waterType: 0
+  fishingSuccessModifier: 1
+  generateWaterZone: 1
+  animationSprites: []
+  animationSpeed: 1
+  randomStartFrame: 1

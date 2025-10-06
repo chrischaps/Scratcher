@@ -1,0 +1,491 @@
+/* Main Menu Base */
+.main-menu {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(20, 40, 60, 1);
+    background-image: url('project://database/Assets/Art/Sprites/Environment/Terrain/water.png');
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.background {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 20, 40, 0.7);
+}
+
+/* Title Section */
+.title-container {
+    align-items: center;
+    margin-bottom: 60px;
+    padding: 20px;
+}
+
+.game-title {
+    font-size: 48px;
+    color: rgba(255, 255, 255, 0.95);
+    -unity-font-style: bold;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 8px;
+    letter-spacing: 4px;
+}
+
+.game-subtitle {
+    font-size: 18px;
+    color: rgba(200, 230, 255, 0.8);
+    -unity-font-style: italic;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+/* Main Navigation */
+.main-navigation {
+    align-items: center;
+    min-width: 250px;
+}
+
+.menu-button {
+    width: 200px;
+    height: 45px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border-width: 2px;
+    font-size: 16px;
+    -unity-font-style: bold;
+    transition-duration: 0.2s;
+    transition-property: background-color, border-color, scale;
+}
+
+.primary-button {
+    background-color: rgba(80, 150, 220, 0.9);
+    border-color: rgba(100, 170, 240, 0.8);
+    color: white;
+}
+
+.primary-button:hover {
+    background-color: rgba(100, 170, 240, 1);
+    border-color: rgba(120, 190, 255, 1);
+    scale: 1.05;
+}
+
+.secondary-button {
+    background-color: rgba(60, 60, 60, 0.8);
+    border-color: rgba(120, 120, 120, 0.6);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.secondary-button:hover {
+    background-color: rgba(80, 80, 80, 0.9);
+    border-color: rgba(140, 140, 140, 0.8);
+    scale: 1.02;
+}
+
+.danger-button {
+    background-color: rgba(180, 60, 60, 0.8);
+    border-color: rgba(200, 80, 80, 0.6);
+    color: white;
+}
+
+.danger-button:hover {
+    background-color: rgba(200, 80, 80, 0.9);
+    border-color: rgba(220, 100, 100, 0.8);
+    scale: 1.02;
+}
+
+/* Panel Base Styles */
+.settings-panel, .load-panel, .credits-panel {
+    position: absolute;
+    width: 600px;
+    max-height: 80%;
+    background-color: rgba(40, 40, 40, 0.95);
+    border-radius: 12px;
+    border-width: 2px;
+    border-color: rgba(100, 150, 200, 0.6);
+    flex-direction: column;
+    display: none;
+}
+
+.panel-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: rgba(60, 60, 60, 0.8);
+    padding: 16px 20px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(120, 120, 120, 0.4);
+}
+
+.panel-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 18px;
+    -unity-font-style: bold;
+}
+
+.close-button {
+    width: 30px;
+    height: 30px;
+    background-color: rgba(180, 60, 60, 0.8);
+    border-width: 0;
+    border-radius: 6px;
+    color: white;
+    font-size: 16px;
+    -unity-font-style: bold;
+}
+
+.close-button:hover {
+    background-color: rgba(200, 80, 80, 1);
+}
+
+/* Settings Panel */
+.settings-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.settings-section {
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: rgba(50, 50, 50, 0.6);
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(120, 120, 120, 0.3);
+}
+
+.section-title {
+    color: rgba(150, 200, 255, 0.9);
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 16px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(120, 120, 120, 0.3);
+    padding-bottom: 8px;
+}
+
+.setting-group {
+    flex-direction: column;
+}
+
+.setting-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.setting-label {
+    color: rgba(220, 220, 220, 0.9);
+    font-size: 14px;
+    min-width: 120px;
+    flex: 1;
+}
+
+.volume-slider, .setting-slider {
+    width: 150px;
+    margin: 0 12px;
+}
+
+.volume-slider .unity-base-slider__tracker,
+.setting-slider .unity-base-slider__tracker {
+    background-color: rgba(80, 80, 80, 0.8);
+    border-radius: 4px;
+    height: 6px;
+}
+
+.volume-slider .unity-base-slider__dragger,
+.setting-slider .unity-base-slider__dragger {
+    width: 14px;
+    height: 14px;
+    background-color: rgba(100, 150, 220, 0.9);
+    border-radius: 7px;
+    border-width: 2px;
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.volume-text {
+    color: rgba(150, 200, 255, 0.9);
+    font-size: 12px;
+    min-width: 40px;
+    text-align: right;
+}
+
+.setting-dropdown {
+    width: 150px;
+    height: 24px;
+    background-color: rgba(60, 60, 60, 0.8);
+    border-color: rgba(120, 120, 120, 0.6);
+    color: white;
+    border-radius: 4px;
+}
+
+.setting-toggle {
+    width: 40px;
+    height: 20px;
+}
+
+.setting-toggle .unity-toggle__checkmark {
+    background-color: rgba(100, 150, 220, 0.9);
+    border-radius: 10px;
+}
+
+/* Control Bindings */
+.control-binding {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background-color: rgba(40, 40, 40, 0.6);
+    border-radius: 4px;
+}
+
+.control-label {
+    color: rgba(220, 220, 220, 0.9);
+    font-size: 13px;
+    flex: 1;
+}
+
+.control-key {
+    color: rgba(150, 200, 255, 0.9);
+    font-size: 12px;
+    -unity-font-style: bold;
+    background-color: rgba(80, 80, 80, 0.6);
+    padding: 4px 8px;
+    border-radius: 4px;
+    margin-right: 8px;
+    min-width: 100px;
+    text-align: center;
+}
+
+.rebind-button {
+    width: 60px;
+    height: 24px;
+    background-color: rgba(80, 120, 180, 0.8);
+    border-width: 0;
+    border-radius: 4px;
+    color: white;
+    font-size: 11px;
+}
+
+.rebind-button:hover {
+    background-color: rgba(100, 140, 200, 1);
+}
+
+/* Settings Footer */
+.settings-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top-width: 1px;
+    border-top-color: rgba(120, 120, 120, 0.4);
+    background-color: rgba(50, 50, 50, 0.8);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Load Panel */
+.save-slots {
+    flex: 1;
+    padding: 20px;
+}
+
+.save-slot {
+    flex-direction: row;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background-color: rgba(50, 50, 50, 0.6);
+    border-radius: 6px;
+    border-width: 2px;
+    border-color: transparent;
+    transition-duration: 0.2s;
+    transition-property: border-color, background-color;
+}
+
+.save-slot:hover {
+    background-color: rgba(60, 60, 60, 0.8);
+    border-color: rgba(100, 150, 220, 0.6);
+}
+
+.save-slot.selected {
+    border-color: rgba(100, 150, 220, 0.9);
+    background-color: rgba(70, 90, 120, 0.6);
+}
+
+.save-info {
+    flex: 1;
+    flex-direction: column;
+}
+
+.save-name {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-bottom: 4px;
+}
+
+.save-details {
+    color: rgba(200, 200, 200, 0.7);
+    font-size: 11px;
+}
+
+.save-preview {
+    width: 60px;
+    height: 45px;
+    background-color: rgba(80, 80, 80, 0.6);
+    border-radius: 4px;
+    margin-left: 12px;
+}
+
+.load-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-top-width: 1px;
+    border-top-color: rgba(120, 120, 120, 0.4);
+    background-color: rgba(50, 50, 50, 0.8);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Credits Panel */
+.credits-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.credits-section {
+    margin-bottom: 24px;
+    align-items: center;
+}
+
+.credits-category {
+    color: rgba(150, 200, 255, 0.9);
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 8px;
+}
+
+.credits-role {
+    color: rgba(220, 220, 220, 0.8);
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.credits-name {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-bottom: 16px;
+}
+
+.credits-footer {
+    color: rgba(180, 180, 180, 0.7);
+    font-size: 12px;
+    -unity-font-style: italic;
+    text-align: center;
+    margin: 8px 0;
+}
+
+/* Version Info */
+.version-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    flex-direction: column;
+}
+
+.version-label {
+    color: rgba(200, 200, 200, 0.6);
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.debug-hint {
+    color: rgba(150, 150, 150, 0.5);
+    font-size: 10px;
+    -unity-font-style: italic;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 800px) {
+    .settings-panel, .load-panel, .credits-panel {
+        width: 90%;
+    }
+
+    .game-title {
+        font-size: 36px;
+    }
+
+    .menu-button {
+        width: 180px;
+        height: 40px;
+    }
+
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .volume-slider, .setting-slider {
+        width: 100%;
+        margin: 8px 0;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .title-container {
+        margin-bottom: 40px;
+    }
+
+    .game-title {
+        font-size: 28px;
+        letter-spacing: 2px;
+    }
+
+    .game-subtitle {
+        font-size: 14px;
+    }
+
+    .menu-button {
+        width: 160px;
+        height: 38px;
+        font-size: 14px;
+    }
+
+    .settings-panel, .load-panel, .credits-panel {
+        width: 95%;
+        max-height: 90%;
+    }
+}
+
+/* Animation Classes */
+.panel-fade-in {
+    transition-duration: 0.3s;
+    transition-property: opacity, scale;
+    opacity: 1;
+    scale: 1;
+}
+
+.panel-fade-out {
+    transition-duration: 0.3s;
+    transition-property: opacity, scale;
+    opacity: 0;
+    scale: 0.95;
+}
+
+.menu-slide-in {
+    transition-duration: 0.5s;
+    transition-property: translate;
+    translate: 0 0;
+}
+
+.menu-slide-out {
+    transition-duration: 0.5s;
+    transition-property: translate;
+    translate: 0 -50px;
+}

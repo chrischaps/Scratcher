@@ -21,6 +21,7 @@ public class TerrainLayerManager : MonoBehaviour
     [SerializeField] private bool autoGenerateColliders = true;
 
     private Dictionary<Vector3Int, TerrainTileInfo> tileInfoCache = new Dictionary<Vector3Int, TerrainTileInfo>();
+    private GameObject waterZonesParent;
 
     private void Start()
     {
@@ -135,14 +136,11 @@ public class TerrainLayerManager : MonoBehaviour
         }
 
         // Clear existing water zones first
-        WaterZone[] existingZones = FindObjectsOfType<WaterZone>();
-        for (int i = 0; i < existingZones.Length; i++)
-        {
-            if (Application.isPlaying)
-                Destroy(existingZones[i].gameObject);
-            else
-                DestroyImmediate(existingZones[i].gameObject);
-        }
+        ClearWaterZones();
+
+        // Create parent GameObject for organization
+        waterZonesParent = new GameObject("WaterZones");
+        waterZonesParent.transform.SetParent(transform);
 
         BoundsInt bounds = waterLayer.cellBounds;
         List<Vector3Int> waterTiles = new List<Vector3Int>();
@@ -243,6 +241,12 @@ public class TerrainLayerManager : MonoBehaviour
         GameObject waterZoneObj = new GameObject($"WaterZone_{waterTiles.Count}tiles");
         waterZoneObj.transform.position = centerWorld;
 
+        // Parent it to the WaterZones container
+        if (waterZonesParent != null)
+        {
+            waterZoneObj.transform.SetParent(waterZonesParent.transform);
+        }
+
         // Add WaterZone component
         WaterZone waterZone = waterZoneObj.AddComponent<WaterZone>();
 
@@ -250,8 +254,8 @@ public class TerrainLayerManager : MonoBehaviour
         PolygonCollider2D collider = waterZoneObj.AddComponent<PolygonCollider2D>();
         collider.isTrigger = true;
 
-        // Create collider points from water tiles
-        List<Vector2> points = CreateColliderFromTiles(waterTiles);
+        // Create collider points from water tiles (relative to centerWorld)
+        List<Vector2> points = CreateColliderFromTiles(waterTiles, centerWorld);
         collider.points = points.ToArray();
 
         // Configure water zone based on first water tile properties
@@ -262,7 +266,7 @@ public class TerrainLayerManager : MonoBehaviour
         }
     }
 
-    private List<Vector2> CreateColliderFromTiles(List<Vector3Int> tiles)
+    private List<Vector2> CreateColliderFromTiles(List<Vector3Int> tiles, Vector3 centerWorld)
     {
         // Simple implementation - create a bounding box
         // For more complex shapes, you'd implement proper polygon generation
@@ -282,12 +286,13 @@ public class TerrainLayerManager : MonoBehaviour
         Vector3 worldMin = waterLayer.CellToWorld(min);
         Vector3 worldMax = waterLayer.CellToWorld(max + Vector3Int.one);
 
+        // Make points relative to centerWorld (local coordinates)
         return new List<Vector2>
         {
-            new Vector2(worldMin.x, worldMin.y),
-            new Vector2(worldMax.x, worldMin.y),
-            new Vector2(worldMax.x, worldMax.y),
-            new Vector2(worldMin.x, worldMax.y)
+            new Vector2(worldMin.x - centerWorld.x, worldMin.y - centerWorld.y),
+            new Vector2(worldMax.x - centerWorld.x, worldMin.y - centerWorld.y),
+            new Vector2(worldMax.x - centerWorld.x, worldMax.y - centerWorld.y),
+            new Vector2(worldMin.x - centerWorld.x, worldMax.y - centerWorld.y)
         };
     }
 
@@ -318,15 +323,32 @@ public class TerrainLayerManager : MonoBehaviour
         tileInfoCache.Clear();
     }
 
-    public void RefreshWaterZones()
+    public void ClearWaterZones()
     {
-        // Remove existing water zones
-        WaterZone[] existingZones = FindObjectsOfType<WaterZone>();
-        for (int i = 0; i < existingZones.Length; i++)
+        // Destroy the parent and all children
+        if (waterZonesParent != null)
         {
-            DestroyImmediate(existingZones[i].gameObject);
+            if (Application.isPlaying)
+                Destroy(waterZonesParent);
+            else
+                DestroyImmediate(waterZonesParent);
+            waterZonesParent = null;
         }
 
+        // Fallback: Find and destroy any orphaned water zones
+        WaterZone[] existingZones = FindObjectsOfType<WaterZone>();
+        foreach (var zone in existingZones)
+        {
+            if (Application.isPlaying)
+                Destroy(zone.gameObject);
+            else
+                DestroyImmediate(zone.gameObject);
+        }
+    }
+
+    public void RefreshWaterZones()
+    {
+        ClearWaterZones();
         GenerateWaterZones();
     }
 

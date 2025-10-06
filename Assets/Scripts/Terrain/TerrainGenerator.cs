@@ -134,6 +134,20 @@ public class TerrainGenerator : MonoBehaviour
         {
             waterLayer.SetTilesBlock(new BoundsInt(-mapWidth/2, -mapHeight/2, 0, mapWidth, mapHeight, 1), new TileBase[mapWidth * mapHeight]);
         }
+
+        // Clear water zones when clearing terrain
+        if (terrainManager != null)
+        {
+            terrainManager.ClearWaterZones();
+        }
+        else
+        {
+            terrainManager = FindObjectOfType<TerrainLayerManager>();
+            if (terrainManager != null)
+            {
+                terrainManager.ClearWaterZones();
+            }
+        }
     }
 
     private void GenerateBaseTerrain()
@@ -181,7 +195,7 @@ public class TerrainGenerator : MonoBehaviour
 
         for (int i = 0; i < lakeCount; i++)
         {
-            Vector3Int lakeCenter = new Vector3Int(
+            Vector3Int lakeCenter = startPosition + new Vector3Int(
                 Random.Range(-mapWidth/2, mapWidth/2),
                 Random.Range(-mapHeight/2, mapHeight/2),
                 0
@@ -358,8 +372,13 @@ public class TerrainGenerator : MonoBehaviour
 
     private bool IsInBounds(Vector3Int position)
     {
-        return position.x >= -mapWidth/2 && position.x < mapWidth/2 &&
-               position.y >= -mapHeight/2 && position.y < mapHeight/2;
+        int minX = startPosition.x - mapWidth/2;
+        int maxX = startPosition.x + mapWidth/2;
+        int minY = startPosition.y - mapHeight/2;
+        int maxY = startPosition.y + mapHeight/2;
+
+        return position.x >= minX && position.x < maxX &&
+               position.y >= minY && position.y < maxY;
     }
 
     [ContextMenu("Generate Sample Tiles")]

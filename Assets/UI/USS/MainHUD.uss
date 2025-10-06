@@ -1,0 +1,454 @@
+/* Game HUD Base Styles */
+.game-hud {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+}
+
+/* Top Status Bar */
+.top-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px 20px;
+    pointer-events: auto;
+}
+
+.status-panel {
+    background-color: rgba(32, 32, 32, 0.85);
+    border-radius: 8px;
+    padding: 12px 16px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.1);
+    min-width: 120px;
+}
+
+/* Time Panel */
+.day-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.time-label {
+    color: rgba(200, 230, 255, 0.9);
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.timeofday-label {
+    color: rgba(255, 200, 100, 0.8);
+    font-size: 12px;
+    -unity-font-style: italic;
+}
+
+/* Weather Panel */
+.weather-icon {
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 200, 100, 0.8);
+    border-radius: 12px;
+    margin-bottom: 4px;
+    align-self: center;
+}
+
+.weather-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    text-align: center;
+}
+
+/* Player Stats */
+.stat-container {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 10px;
+    width: 50px;
+    min-width: 50px;
+}
+
+.energy-bar {
+    flex: 1;
+    height: 8px;
+    margin: 0 8px;
+}
+
+.energy-bar .unity-progress-bar__background {
+    background-color: rgba(100, 100, 100, 0.6);
+    border-radius: 4px;
+    border-width: 0;
+}
+
+.energy-bar .unity-progress-bar__progress {
+    background-color: rgba(100, 200, 100, 0.9);
+    border-radius: 4px;
+    margin: 0;
+}
+
+.stat-text {
+    color: rgba(150, 255, 150, 0.9);
+    font-size: 10px;
+    min-width: 40px;
+    text-align: right;
+}
+
+/* Bottom Info Bar */
+.bottom-bar {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding: 16px 20px;
+    pointer-events: auto;
+}
+
+.info-panel {
+    background-color: rgba(32, 32, 32, 0.85);
+    border-radius: 6px;
+    padding: 8px 12px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.1);
+    flex-direction: row;
+    align-items: center;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    border-radius: 4px;
+}
+
+.fish-icon {
+    background-color: rgba(100, 150, 255, 0.8);
+}
+
+.coin-icon {
+    background-color: rgba(255, 200, 100, 0.8);
+}
+
+.count-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    -unity-font-style: bold;
+    margin-right: 4px;
+}
+
+.label-text {
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 11px;
+}
+
+.location-label {
+    color: rgba(150, 200, 255, 0.9);
+    font-size: 12px;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.interaction-hint {
+    color: rgba(255, 255, 150, 0.8);
+    font-size: 10px;
+    -unity-font-style: italic;
+}
+
+/* Notification Area */
+.notification-area {
+    position: absolute;
+    top: 100px;
+    right: 20px;
+    width: 300px;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+.notification-toast {
+    background-color: rgba(32, 32, 32, 0.9);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    border-left-width: 4px;
+    border-left-color: rgba(100, 200, 100, 0.8);
+    max-width: 280px;
+    transition-duration: 0.3s;
+    transition-property: opacity, translate;
+    opacity: 1;
+    translate: 0 0;
+}
+
+.notification-toast.notification-hidden {
+    opacity: 0;
+    translate: 20px 0;
+}
+
+.notification-icon {
+    width: 24px;
+    height: 24px;
+    background-color: rgba(100, 200, 100, 0.8);
+    border-radius: 4px;
+    margin-right: 8px;
+}
+
+.notification-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    -unity-font-style: bold;
+    margin-bottom: 2px;
+}
+
+.notification-message {
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 10px;
+}
+
+/* Fishing Overlay */
+.fishing-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: none;
+    pointer-events: auto;
+}
+
+.fishing-panel {
+    background-color: rgba(32, 32, 32, 0.9);
+    border-radius: 12px;
+    padding: 24px 32px;
+    border-width: 2px;
+    border-color: rgba(100, 150, 255, 0.5);
+    align-items: center;
+    min-width: 250px;
+}
+
+.fishing-status {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 16px;
+    -unity-font-style: bold;
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.fishing-progress {
+    width: 200px;
+    height: 12px;
+    margin-bottom: 16px;
+}
+
+.fishing-progress .unity-progress-bar__background {
+    background-color: rgba(100, 100, 100, 0.6);
+    border-radius: 6px;
+    border-width: 0;
+}
+
+.fishing-progress .unity-progress-bar__progress {
+    background-color: rgba(100, 150, 255, 0.9);
+    border-radius: 6px;
+    margin: 0;
+}
+
+.fishing-instruction {
+    color: rgba(255, 255, 150, 0.8);
+    font-size: 12px;
+    text-align: center;
+    -unity-font-style: italic;
+}
+
+/* Mini Inventory */
+.mini-inventory {
+    position: absolute;
+    top: 140px;
+    left: 20px;
+    width: 200px;
+    background-color: rgba(32, 32, 32, 0.85);
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.1);
+    pointer-events: auto;
+}
+
+.mini-inventory-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    border-bottom-width: 1px;
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.mini-inventory-title {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    -unity-font-style: bold;
+}
+
+.open-inventory-button {
+    width: 20px;
+    height: 20px;
+    background-color: rgba(100, 100, 100, 0.6);
+    border-width: 0;
+    border-radius: 4px;
+    color: white;
+    font-size: 10px;
+}
+
+.open-inventory-button:hover {
+    background-color: rgba(150, 150, 150, 0.8);
+}
+
+.mini-inventory-grid {
+    padding: 8px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+}
+
+.mini-fish-item {
+    width: 32px;
+    height: 32px;
+    background-color: rgba(64, 64, 64, 0.6);
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: rgba(255, 255, 255, 0.2);
+    margin: 2px;
+    justify-content: center;
+    align-items: center;
+}
+
+.mini-fish-item:hover {
+    border-color: rgba(100, 150, 255, 0.8);
+    background-color: rgba(80, 80, 80, 0.8);
+}
+
+/* Input Hints */
+.input-hints {
+    position: absolute;
+    bottom: 100px;
+    right: 20px;
+    flex-direction: column;
+    align-items: flex-end;
+    pointer-events: none;
+}
+
+.hint-item {
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 4px;
+    background-color: rgba(32, 32, 32, 0.7);
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+.key-label {
+    background-color: rgba(100, 100, 100, 0.8);
+    color: white;
+    font-size: 10px;
+    -unity-font-style: bold;
+    padding: 2px 6px;
+    border-radius: 3px;
+    margin-right: 6px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.action-label {
+    color: rgba(200, 200, 200, 0.8);
+    font-size: 10px;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 1024px) {
+    .top-bar, .bottom-bar {
+        padding: 12px 16px;
+    }
+
+    .status-panel {
+        padding: 8px 12px;
+        min-width: 100px;
+    }
+
+    .mini-inventory {
+        width: 180px;
+    }
+
+    .notification-area {
+        width: 250px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .top-bar, .bottom-bar {
+        padding: 8px 12px;
+    }
+
+    .status-panel {
+        padding: 6px 10px;
+        min-width: 80px;
+    }
+
+    .mini-inventory {
+        width: 160px;
+    }
+
+    .notification-area {
+        width: 200px;
+        right: 12px;
+    }
+
+    .input-hints {
+        bottom: 12px;
+        right: 12px;
+    }
+
+    .fishing-panel {
+        padding: 16px 24px;
+        min-width: 200px;
+    }
+}
+
+/* Animation Classes */
+.fade-in {
+    transition-duration: 0.3s;
+    transition-property: opacity;
+    opacity: 1;
+}
+
+.fade-out {
+    transition-duration: 0.3s;
+    transition-property: opacity;
+    opacity: 0;
+}
+
+.slide-in-right {
+    transition-duration: 0.3s;
+    transition-property: translate;
+    translate: 0 0;
+}
+
+.slide-out-right {
+    transition-duration: 0.3s;
+    transition-property: translate;
+    translate: 100px 0;
+}
+
+.pulse {
+    transition-duration: 0.5s;
+    transition-property: scale;
+    scale: 1;
+}
+
+.pulse:hover {
+    scale: 1.05;
+}

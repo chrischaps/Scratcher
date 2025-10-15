@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da32b43e45512c74db1e3083727ce9f8, type: 3}
   m_Name: PondWater
   m_EditorClassIdentifier: Assembly-CSharp::WaterTile
-  tileSprite: {fileID: -7805873594454908723, guid: 811713ad6e23c6a4780078bb3ea27972, type: 3}
-  tileColor: {r: 0.16860795, g: 0.39587277, b: 0.7509433, a: 1}
+  tileSprite: {fileID: -9153290457803940368, guid: 7b06c59ae3f76fe4090af49c2c9b3ba7, type: 3}
+  tileColor: {r: 1, g: 1, b: 1, a: 1}
   tileTransform:
     e00: 1
     e01: 0

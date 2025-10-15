@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e062b1e34b56aa46b99f7eb1ae0e5ff, type: 3}
   m_Name: Sand_1
   m_EditorClassIdentifier: Assembly-CSharp::NormalTile
-  tileSprite: {fileID: -2859652619293667525, guid: 04b31daf08454cc46bce1e08a7d9ca33, type: 3}
+  tileSprite: {fileID: -8724323361410377488, guid: 03524b4ff28a9b54e86276bec05d7d90, type: 3}
   tileColor: {r: 0.83396226, g: 0.7948789, b: 0.5711854, a: 1}
   tileTransform:
     e00: 1

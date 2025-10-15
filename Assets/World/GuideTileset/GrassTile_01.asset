@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e062b1e34b56aa46b99f7eb1ae0e5ff, type: 3}
   m_Name: GrassTile_01
   m_EditorClassIdentifier: Assembly-CSharp::NormalTile
-  tileSprite: {fileID: 3356453087456034871, guid: ee62213f5f86beb48aff603164d109d6, type: 3}
-  tileColor: {r: 0, g: 0.6981132, b: 0.089075714, a: 1}
+  tileSprite: {fileID: -8093324950678878029, guid: 1d1647f5f3433d946a2f18fecd7fabd1, type: 3}
+  tileColor: {r: 1, g: 1, b: 1, a: 1}
   tileTransform:
     e00: 1
     e01: 0

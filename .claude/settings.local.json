@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "mcp__ide__getDiagnostics"
+      "mcp__ide__getDiagnostics",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nAdd comprehensive UI Toolkit system documentation\n\n- Create UI_TOOLKIT_SYSTEM_GUIDE.md with complete system documentation\n- Update DebugPanel.uxml with refined structure and element names\n- Apply code cleanup to TerrainAwarePlayerController (const usage, FindFirstObjectByType)\n- Update GameScene with latest UI configuration\n\nDocumentation includes:\n- System architecture and file locations\n- Quick start setup guide (automatic and manual)\n- Core UI components (UIManager, GameHUD, DebugPanel, Notifications)\n- Data binding and reactive update patterns\n- Styling with USS (animations, responsive design)\n- Performance optimization best practices\n- Comprehensive troubleshooting section\n- Complete API reference\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []

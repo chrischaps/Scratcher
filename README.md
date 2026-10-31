@@ -2,6 +2,8 @@
 
 A 2D isometric fishing and farming game built with Unity 6000.2.5f1 and Universal Render Pipeline (URP).
 
+**Project page:** [chaps.dev/projects/scratcher](https://chaps.dev/projects/scratcher/)
+
 ## 🎮 Game Features
 
 ### Core Gameplay Systems
